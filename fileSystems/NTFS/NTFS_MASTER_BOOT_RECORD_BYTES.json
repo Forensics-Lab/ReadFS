@@ -1,0 +1,107 @@
+{
+    "jump_instrc": {
+        "start": 0,
+        "end": 2,
+        "btformat": "hex"
+    },
+    "OEM_ID": {
+        "start": 3,
+        "end": 10,
+        "btformat": "hex"
+    },
+    "BPS": {
+        "start": 11,
+        "end": 12,
+        "btformat": "dec"
+    },
+    "sec_per_cluster": {
+        "start": 13,
+        "end": 13,
+        "btformat": "dec"
+    },
+    "reserved": {
+        "start": 14,
+        "end": 15,
+        "btformat": "dec"
+    },
+    "x": {
+        "start": 16,
+        "end": 18,
+        "btformat": "dec"
+    },
+    "media_disk": {
+        "start": 21,
+        "end": 21,
+        "btformat": "hex"
+    },
+    "y": {
+        "start": 22,
+        "end": 23,
+        "btformat": "hex"
+    },
+    "sectors_per_track": {
+        "start": 24,
+        "end": 25,
+        "btformat": "dec"
+    },
+    "heads_cnt": {
+        "start": 26,
+        "end": 27,
+        "btformat": "dec"
+    },
+    "hidden_sectors": {
+        "start": 28,
+        "end": 31,
+        "btformat": "dec"
+    },
+    "total_sectors": {
+        "start": 32,
+        "end": 39,
+        "btformat": "dec"
+    },
+    "unused_space": {
+        "start": 40,
+        "end": 47,
+        "btformat": "dec"
+    },
+    "logical_mft_cluster": {
+        "start": 48,
+        "end": 55,
+        "btformat": "dec"
+    },
+    "logical_mftMirr_cluster": {
+        "start": 56,
+        "end": 63,
+        "btformat": "dec"
+    },
+    "clust_per_file_record_segment": {
+        "start": 64,
+        "end": 67,
+        "btformat": "dec"
+    },
+    "clusters_per_index_block": {
+        "start": 68,
+        "end": 71,
+        "btformat": "dec"
+    },
+    "volume_serial_number": {
+        "start": 72,
+        "end": 79,
+        "btformat": "hex"
+    },
+    "checksum": {
+        "start": 80,
+        "end": 83,
+        "btformat": "hex"
+    },
+    "end_sector": {
+        "start": 510,
+        "end": 511,
+        "btformat": "hex"
+    },
+    "boot_code": {
+        "start": 84,
+        "end": 509,
+        "btformat": "bstr"
+    }
+}
