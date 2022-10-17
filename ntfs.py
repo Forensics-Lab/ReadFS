@@ -6,7 +6,7 @@ class NTFS:
 		self.offset = offset
 
 	def jump_instr(self):
-		return self.reader.read_bytes(0, 2, offset=self.offset)
+		return hex(int.from_bytes(self.reader.read_bytes(0, 2, offset=self.offset), "little"))
 
 	def OME_ID(self):
 		return self.reader.read_bytes(3, 10, offset=self.offset).decode("utf-8").strip()
@@ -60,7 +60,11 @@ class NTFS:
 	def checksum(self):
 		return hex(int.from_bytes(self.reader.read_bytes(80, 82, offset=self.offset), "little"))
 
-
+	def get_all_attr(self):
+		return self.jump_instr(), self.OME_ID(), self.BPS(), self.sec_per_cluster(), self.reserved(),\
+			   self.unused(), self.media_desc(), self.sec_per_track(), self.heads_number(), self.hidden_secotrs(),\
+			   self.total_secotrs(), self.logical_mft_cl(), self.logical_mftmirr_cl(), self.cl_per_file_rec_seg(),\
+			   self.cl_per_index_block(), self.volume_serial_number(), self.checksum()
 
 
 

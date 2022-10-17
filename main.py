@@ -17,10 +17,9 @@ reader = Reader(args.file)
 mbr = MBR(reader)
 
 partitions = mbr.get_all_partitions()
-for i in partitions:
-	print(i.get_all_attr())
+# for i in partitions:
+# 	print(i.get_all_attr())
 
 ntfs = NTFS(reader, offset=partitions[0].LBA())
-print(ntfs.checksum())
+print(ntfs.get_all_attr())
 
-# print(ntfs.logical_mft_cl())
