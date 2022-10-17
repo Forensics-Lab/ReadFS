@@ -39,14 +39,14 @@ class Partition:
 		return hex(int.from_bytes(self.partition[5:8], "little"))
 
 	def LBA(self):
-		return hex(int.from_bytes(self.partition[8:12], "little")*512)
+		return int.from_bytes(self.partition[8:12], "little")*512
 
 	def size_in_sectors(self):
-		return int.from_bytes(self.partition[12:16], "little")
+		return round(int.from_bytes(self.partition[12:16], "little")*512/1073741824, 2)
 
 	def get_all_attr(self):
 		return self.boot_flag(), self.CHS_start(), self.p_type(), self.CHS_end(),\
-			   self.LBA(), self.size_in_sectors()
+			   hex(self.LBA()), self.size_in_sectors()
 
 	def __str__(self):
 		return str(self.partition)

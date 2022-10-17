@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import argparse
 from mbr import MBR
+from ntfs import NTFS
 from reader import Reader
 
 
@@ -14,7 +15,12 @@ args = parser.parse_args()
 
 reader = Reader(args.file)
 mbr = MBR(reader)
-partitions = mbr.get_all_partitions()
 
-for partition in partitions:
-	print(partition.get_all_attr())
+partitions = mbr.get_all_partitions()
+for i in partitions:
+	print(i.get_all_attr())
+
+ntfs = NTFS(reader, offset=partitions[0].LBA())
+print(ntfs.BPS())
+
+# print(ntfs.logical_mft_cl())
