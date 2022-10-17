@@ -41,17 +41,12 @@ class NTFS:
 		return int.from_bytes(self.reader.read_bytes(40, 47, offset=self.offset), "little")
 
 	def logical_mft_cl(self):
-		x = int.from_bytes(self.reader.read_bytes(48, 55, offset=self.offset), "little")
-		# x = int(self.logical_mftmirr_cl(), 16)
-		y = self.sec_per_cluster()
-		z = self.BPS()
-		return hex(x * y * z)
-		# return hex(int.from_bytes(self.reader.read_bytes(48, 55, offset=self.offset), "little"))
-		# Talk with David about this
-
+		# Logical_mtf_cluster * sector_per_cluster * bytes_per_sector + offset
+		return hex(int.from_bytes(self.reader.read_bytes(48, 55, offset=self.offset), "little") * self.sec_per_cluster() * self.BPS()+self.offset)
 
 	def logical_mftmirr_cl(self):
-		return hex(int.from_bytes(self.reader.read_bytes(56, 63, offset=self.offset), "little"))
+		# Logical_mtfirr_cluster * sector_per_cluster * bytes_per_sector + offset
+		return hex(int.from_bytes(self.reader.read_bytes(56, 63, offset=self.offset), "little")  * self.sec_per_cluster() * self.BPS()+self.offset)
 
 	def cl_per_file_rec_seg(self):
 		return int.from_bytes(self.reader.read_bytes(64, 67, offset=self.offset), "little")

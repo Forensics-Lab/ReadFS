@@ -21,6 +21,6 @@ for i in partitions:
 	print(i.get_all_attr())
 
 ntfs = NTFS(reader, offset=partitions[0].LBA())
-print(ntfs.BPS())
+print(ntfs.checksum())
 
 # print(ntfs.logical_mft_cl())
