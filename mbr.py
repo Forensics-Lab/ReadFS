@@ -43,7 +43,7 @@ class Partition:
         return int.from_bytes(self.partition[8:12], "little")*512
 
     def size_in_sectors(self):
-        return round(int.from_bytes(self.partition[12:16], "little")*512/1073741824, 2)
+        return int.from_bytes(self.partition[12:16], "little")*512
 
     def get_all_attr(self):
         return self.boot_flag(), self.CHS_start(), self.p_type(), self.CHS_end(),\

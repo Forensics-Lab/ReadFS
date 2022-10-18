@@ -11,5 +11,11 @@ class Reader:
         # Here I'd eventually just create a function to return me the data as a certain bytes format
         # Like string, decimal, hex, byte string and the little/big endians ordering.
         # it will look smthing like this
-        # return self.format_bytes(self.data, bformat=bformat, order=order)
-        return self.data
+        return self.format_bytes(self.data, bformat=bformat, order=order)
+        # return self.data
+
+    def format_bytes(self, data, bformat="bstr", order="little"):
+        if bformat == "hex":  return hex(int.from_bytes(data, order))
+        if bformat == "dec":  return int.from_bytes(data, order)
+        if bformat == "str":  return ''.join([chr(i) for i in data])
+        if bformat == "bstr": return data
