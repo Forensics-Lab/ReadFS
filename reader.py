@@ -13,4 +13,3 @@ class Reader:
         # it will look smthing like this
         # return self.format_bytes(self.data, bformat=bformat, order=order)
         return self.data
-

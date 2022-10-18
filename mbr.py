@@ -15,12 +15,13 @@ class MBR:
 
     def p3(self):
         return Partition(self.reader.read_bytes(478, 493))
-    
+
     def p4(self):
         return Partition(self.reader.read_bytes(494, 509))
 
     def get_all_partitions(self):
         return self.p1(), self.p2(), self.p3(), self.p4()
+
 
 class Partition:
     def __init__(self, partition):
@@ -46,7 +47,7 @@ class Partition:
 
     def get_all_attr(self):
         return self.boot_flag(), self.CHS_start(), self.p_type(), self.CHS_end(),\
-               hex(self.LBA()), self.size_in_sectors()
+            hex(self.LBA()), self.size_in_sectors()
 
     def __str__(self):
         return str(self.partition)

@@ -21,8 +21,10 @@ class NTFS:
         return hex(int.from_bytes(self.reader.read_bytes(14, 15, offset=self.offset), "little"))
 
     def unused(self):
-        u1 = int.from_bytes(self.reader.read_bytes(19, 20, offset=self.offset), "little")
-        u2 = int.from_bytes(self.reader.read_bytes(32, 39, offset=self.offset), "little")
+        u1 = int.from_bytes(self.reader.read_bytes(
+            19, 20, offset=self.offset), "little")
+        u2 = int.from_bytes(self.reader.read_bytes(
+            32, 39, offset=self.offset), "little")
         return hex(u1+u2)
 
     def media_desc(self):
@@ -46,7 +48,7 @@ class NTFS:
 
     def logical_mftmirr_cl(self):
         # Logical_mtfirr_cluster * sector_per_cluster * bytes_per_sector + offset
-        return hex(int.from_bytes(self.reader.read_bytes(56, 63, offset=self.offset), "little")  * self.sec_per_cluster() * self.BPS()+self.offset)
+        return hex(int.from_bytes(self.reader.read_bytes(56, 63, offset=self.offset), "little") * self.sec_per_cluster() * self.BPS()+self.offset)
 
     def cl_per_file_rec_seg(self):
         return int.from_bytes(self.reader.read_bytes(64, 67, offset=self.offset), "little")
@@ -62,13 +64,6 @@ class NTFS:
 
     def get_all_attr(self):
         return self.jump_instr(), self.OME_ID(), self.BPS(), self.sec_per_cluster(), self.reserved(),\
-               self.unused(), self.media_desc(), self.sec_per_track(), self.heads_number(), self.hidden_secotrs(),\
-               self.total_secotrs(), self.logical_mft_cl(), self.logical_mftmirr_cl(), self.cl_per_file_rec_seg(),\
-               self.cl_per_index_block(), self.volume_serial_number(), self.checksum()
-
-
-
-
-
-
-
+            self.unused(), self.media_desc(), self.sec_per_track(), self.heads_number(), self.hidden_secotrs(),\
+            self.total_secotrs(), self.logical_mft_cl(), self.logical_mftmirr_cl(), self.cl_per_file_rec_seg(),\
+            self.cl_per_index_block(), self.volume_serial_number(), self.checksum()
