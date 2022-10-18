@@ -9,7 +9,7 @@ class NTFS:
         return hex(int.from_bytes(self.reader.read_bytes(0, 2, offset=self.offset), "little"))
 
     def OME_ID(self):
-        return self.reader.read_bytes(3, 10, offset=self.offset).decode("utf-8").strip()
+        return ''.join([chr(i) for i in self.reader.read_bytes(3, 10, offset=self.offset)]).strip()
 
     def BPS(self):
         return int.from_bytes(self.reader.read_bytes(11, 12, offset=self.offset), "little")

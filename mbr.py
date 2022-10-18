@@ -48,6 +48,3 @@ class Partition:
     def get_all_attr(self):
         return self.boot_flag(), self.CHS_start(), self.p_type(), self.CHS_end(),\
             hex(self.LBA()), self.size_in_sectors()
-
-    def __str__(self):
-        return str(self.partition)
