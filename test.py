@@ -24,7 +24,7 @@ def superBlock(SectorsPerCluster:bytes, BytesPerSector:bytes) -> int:
     return 0x1e * toDecimal(SectorsPerCluster) * toDecimal(BytesPerSector)
 
 def main():
-    REFS_Offsets = getFile("D:\\Uni\\Third Year\\CST3590 Individual Project\\REFS_offsets.json5")
+    REFS_Offsets = getFile("D:\\Uni\\Third Year\\CST3590 Individual Project\\fsread\\REFS_offsets.json5")
     REFS_Boot_Sector = REFS_Offsets["bootSector"]
     REFS_Page_Header = REFS_Offsets["pageHeader"]
 
