@@ -14,7 +14,7 @@ def main():
     bootSector = BootSector(getBytes([0x0, 0x48]))
     pageSize = bootSector.sectorsPerCluster() * bootSector.bytesPerSector()
     sbo = bootSector.superBlockOffset()
-    sb = Superblock(getBytes([0x0, pageSize], sbo), bootSector)
+    sb = Superblock(getBytes([0x0, pageSize], sbo))
     print(bootSector.info())
     print(sb.info())
 

@@ -2,11 +2,10 @@ from ReFS.pageHeader import PageHeader
 from bytesFormater.formater import Formater
 
 class Superblock:
-    def __init__(self, byteArray, bootsector) -> None:
+    def __init__(self, byteArray) -> None:
         self.byteArray = byteArray
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
         self.formater = Formater()
-        self.bootsector = bootsector
 
     def GUID(self) -> str:
         temp = [self.formater.toDecimal(self.byteArray[0x50:0x60][i:i+4]) for i in range(0, len(self.byteArray[0x50:0x60]), 4)]
@@ -17,10 +16,10 @@ class Superblock:
         return self.formater.toDecimal(self.byteArray[0x68:0x70])
 
     def checkpointOffset(self) -> tuple[int, int]:
-        byteArrayRelativeOffset = self.formater.toDecimal(self.byteArray[0x70:0x74]) % len(self.byteArray)
-        bytesPerCluster = self.bootsector.sectorsPerCluster() * self.bootsector.bytesPerSector()
-        chk1 = self.formater.toDecimal(self.byteArray[byteArrayRelativeOffset:byteArrayRelativeOffset+0x08]) * bytesPerCluster 
-        chk2 = self.formater.toDecimal(self.byteArray[byteArrayRelativeOffset+0x08:byteArrayRelativeOffset+0x10]) * bytesPerCluster
+        clusterSize = len(self.byteArray)
+        byteArrayRelativeOffset = self.formater.toDecimal(self.byteArray[0x70:0x74]) % clusterSize
+        chk1 = self.formater.toDecimal(self.byteArray[byteArrayRelativeOffset:byteArrayRelativeOffset+0x08]) * clusterSize 
+        chk2 = self.formater.toDecimal(self.byteArray[byteArrayRelativeOffset+0x08:byteArrayRelativeOffset+0x10]) * clusterSize
         return  chk1, chk2
 
     def checkpointReferenceNumber(self) -> int:
