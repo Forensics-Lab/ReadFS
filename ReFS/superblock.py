@@ -18,9 +18,9 @@ class Superblock:
 
     def checkpointOffset(self) -> tuple[int, int]:
         clusterSize = len(self.byteArray)
-        byteArrayRelativeOffset = self.formater.toDecimal(self.byteArray[0x70:0x74]) % clusterSize
-        chk1 = self.formater.toDecimal(self.byteArray[byteArrayRelativeOffset:byteArrayRelativeOffset+0x08]) * clusterSize 
-        chk2 = self.formater.toDecimal(self.byteArray[byteArrayRelativeOffset+0x08:byteArrayRelativeOffset+0x10]) * clusterSize
+        checkpointRelativeOffset = self.formater.toDecimal(self.byteArray[0x70:0x74])
+        chk1 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset:checkpointRelativeOffset+0x08]) * clusterSize
+        chk2 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset+0x08:checkpointRelativeOffset+0x10]) * clusterSize
         return  chk1, chk2
 
     def checkpointReferenceNumber(self) -> int:
@@ -35,7 +35,7 @@ class Superblock:
     def info(self) -> str:
         checkpoint1, checkpoint2 = self.checkpointOffset()
         return f"{self.pageHeader.info()}\n"\
-               f"<<======================Superblock=====================>>\n"\
+               f"<<======================[Superblock]=====================>>\n"\
                f"[+] GUID: {self.GUID()}\n"\
                f"[+] Superblock Version: {self.version()}\n"\
                f"[+] Checkpoint Reference Number: {self.checkpointReferenceNumber()}\n"\

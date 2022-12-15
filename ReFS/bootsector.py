@@ -47,7 +47,7 @@ class BootSector():
         return 0x1e * self.sectorsPerCluster() * self.bytesPerSector()
 
     def info(self) -> str:
-        return "<<=====================Boot Sector=====================>>\n"\
+        return "<<=====================[Boot Sector]=====================>>\n"\
               f"[+] ReFS Version: {self.ReFSVersion()}\n"\
               f"[+] Super Block Offset: {self.superBlockOffset()} bytes\n"\
               f"[+] VBR Size: {self.sizeOfVBR()} bytes\n"\

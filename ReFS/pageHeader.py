@@ -39,7 +39,7 @@ class PageHeader:
     def info(self):
         LCN_0,LCN_1,LCN_2,LCN_3 = self.LCNS()
         high, low = self.tableIdentifier()
-        return "<<=====================Page Header=====================>>\n"\
+        return "<<=====================[Page Header]=====================>>\n"\
                f"[+] Page Signature: {self.pageSignature()}\n"\
                f"[+] Volume Signature: {self.volumeSignature()}\n"\
                f"[+] LCN_0: {LCN_0} cluster\n"\
