@@ -15,10 +15,8 @@ def main():
     pageSize = bootSector.sectorsPerCluster() * bootSector.bytesPerSector()
     sbo = bootSector.superBlockOffset()
     sb = Superblock(getBytes([0x0, pageSize], sbo))
-    # print(sb.info())
     chkoff = sb.checkpointOffset()[0]
     checkpoint = Checkpoint(getBytes([0x0, pageSize], chkoff))
-    # print(chkoff)
     print(checkpoint.info())
 
 if __name__ == '__main__':
