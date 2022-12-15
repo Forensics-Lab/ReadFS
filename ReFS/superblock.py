@@ -1,6 +1,7 @@
 from typing import Union
 from ReFS.pageHeader import PageHeader
 from bytesFormater.formater import Formater
+from ReFS.pageDescriptor import PageDescriptor
 
 class Superblock:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
@@ -9,10 +10,11 @@ class Superblock:
         self.formater = Formater()
 
     def GUID(self) -> str:
-        temp = [self.formater.toDecimal(self.byteArray[0x50:0x60][i:i+4]) for i in range(0, len(self.byteArray[0x50:0x60]), 4)]
-        sig = hex(temp[0] ^ temp[1] ^ temp[2] ^ temp[3])[2:]
-        return ' '.join([sig[i:i+2] for i in range(0, len(sig), 2)]).upper()
-    
+        temp = [self.formater.reverseBytes(self.byteArray[0x50:0x60][i:i+4]) for i in range(0, len(self.byteArray[0x50:0x60]), 4)]
+        temp = [self.formater.toDecimal(i) for i in temp]
+        sig = (temp[0] ^ temp[1] ^ temp[2] ^ temp[3]).to_bytes(len(temp), "little").hex().upper()
+        return sig
+
     def version(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x68:0x70])
 
@@ -43,4 +45,4 @@ class Superblock:
                f"[+] Checkpoint2 Offset: {checkpoint2} bytes\n"\
                f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()} bytes\n"\
                f"[+] Self Descriptor Length: {self.selfDescriptorLength()} bytes\n"\
-               f"<<=====================================================>>\n"\
+               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}\n"\

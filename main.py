@@ -17,6 +17,8 @@ def main():
     sb = Superblock(getBytes([0x0, pageSize], sbo))
     chkoff = sb.checkpointOffset()[0]
     checkpoint = Checkpoint(getBytes([0x0, pageSize], chkoff))
+    print(bootSector.info())
+    print(sb.info())
     print(checkpoint.info())
 
 if __name__ == '__main__':

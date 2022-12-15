@@ -1,6 +1,7 @@
 from typing import Union
-from bytesFormater.formater import Formater
 from ReFS.pageHeader import PageHeader
+from bytesFormater.formater import Formater
+from ReFS.pageDescriptor import PageDescriptor
 
 class Checkpoint:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
@@ -27,7 +28,7 @@ class Checkpoint:
         return self.formater.toDecimal(self.byteArray[0x68:0x70])
 
     def oldestLogRecordReference(self):
-        return self.formater.toHex(self.byteArray[0x70:0x78])
+        return self.formater.toDecimal(self.byteArray[0x78:0x7C])
 
     def alignment(self):
         return self.formater.toDecimal(self.byteArray[0x7C:0x80])
@@ -108,6 +109,4 @@ class Checkpoint:
                f"[+] Container Index Table: {self.containerIndexTablePointer()} bytes\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()} bytes\n"\
                f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()} bytes\n"\
-               f"<<=====================================================>>\n"
-        
-
+               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"
