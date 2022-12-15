@@ -1,8 +1,9 @@
+from typing import Union
 from ReFS.pageHeader import PageHeader
 from bytesFormater.formater import Formater
 
 class Superblock:
-    def __init__(self, byteArray) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
         self.formater = Formater()
@@ -40,6 +41,6 @@ class Superblock:
                f"[+] Checkpoint Reference Number: {self.checkpointReferenceNumber()}\n"\
                f"[+] Checkpoint1 Offset: {checkpoint1} bytes\n"\
                f"[+] Checkpoint2 Offset: {checkpoint2} bytes\n"\
-               f"[+] Self Descriptor Offset: {self.selfDescriptorOffset()} bytes\n"\
+               f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()} bytes\n"\
                f"[+] Self Descriptor Length: {self.selfDescriptorLength()} bytes\n"\
                f"<<=====================================================>>\n"\

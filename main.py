@@ -1,4 +1,3 @@
-from json5 import load
 from typing import Union
 from ReFS.bootsector import BootSector
 from ReFS.superblock import Superblock
