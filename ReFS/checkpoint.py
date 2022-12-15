@@ -9,81 +9,81 @@ class Checkpoint:
         self.formater = Formater()
         self.pageheader = PageHeader(self.byteArray[0x0:0x50])
 
-    def majorVersion(self):
+    def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])
 
-    def minorVersion(self):
+    def minorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x56:0x58])
 
-    def selfDescriptorOffset(self):
+    def selfDescriptorOffset(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x58:0x5C])
 
-    def selfDescriptorLength(self):
+    def selfDescriptorLength(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x5C:0x60])
 
-    def chkpVirtualClock(self):
+    def chkpVirtualClock(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x60:0x68])
 
-    def allocatorVirtualClock(self):
+    def allocatorVirtualClock(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x68:0x70])
 
-    def oldestLogRecordReference(self):
+    def oldestLogRecordReference(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x78:0x7C])
 
-    def alignment(self):
+    def alignment(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x7C:0x80])
 
-    def reserved(self):
+    def reserved(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x80:0x88])
 
-    def pointerCount(self):
+    def pointerCount(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x90:0x94])
 
-    def pointerList(self):
+    def pointerList(self) -> list:
         plist = self.byteArray[0x94:0xC8]
         plist = [self.formater.toDecimal(plist[i:i+4]) for i in range(0, len(plist), 4)]
         return plist
 
-    def objectIDPointer(self):
+    def objectIDPointer(self) -> int:
         return self.pointerList()[0]
 
-    def mediumAllocatorPointer(self):
+    def mediumAllocatorPointer(self) -> int:
         return self.pointerList()[1]
 
-    def containerAllocatorPointer(self):
+    def containerAllocatorPointer(self) -> int:
         return self.pointerList()[2]
 
-    def schemaTablePointer(self):
+    def schemaTablePointer(self) -> int:
         return self.pointerList()[3]
 
-    def parentChildTablePointer(self):
+    def parentChildTablePointer(self) -> int:
         return self.pointerList()[4]
 
-    def objectIDDuplicatePointer(self):
+    def objectIDDuplicatePointer(self) -> int:
         return self.pointerList()[5]
 
-    def blockReferenceCountPointer(self):
+    def blockReferenceCountPointer(self) -> int:
         return self.pointerList()[6]
 
-    def containerTablePointer(self):
+    def containerTablePointer(self) -> int:
         return self.pointerList()[7]
 
-    def containerTableDuplicatePointer(self):
+    def containerTableDuplicatePointer(self) -> int:
         return self.pointerList()[8]
 
-    def schemaTableDuplicatePointer(self):
+    def schemaTableDuplicatePointer(self) -> int:
         return self.pointerList()[9]
 
-    def containerIndexTablePointer(self):
+    def containerIndexTablePointer(self) -> int:
         return self.pointerList()[10]
 
-    def integrityStateTablePointer(self):
+    def integrityStateTablePointer(self) -> int:
         return self.pointerList()[11]
 
-    def smallAllocatorTablePointer(self):
+    def smallAllocatorTablePointer(self) -> int:
         return self.pointerList()[12]
 
-    def info(self):
+    def info(self) -> str:
         return f"{self.pageheader.info()}\n"\
                f"<<======================[Checkpoint]=====================>>\n"\
                f"[+] ReFS Version: {self.majorVersion()}.{self.minorVersion()}\n"\

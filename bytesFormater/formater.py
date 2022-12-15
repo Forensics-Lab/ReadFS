@@ -6,7 +6,7 @@ class Formater():
     def toString(self, _bytes: bytes) -> str:
         return _bytes.decode()
 
-    def reverseBytes(self, _bytes: bytes):
+    def reverseBytes(self, _bytes: bytes) -> bytearray:
         temp = bytearray(_bytes)
         temp.reverse()
         return temp

@@ -43,7 +43,7 @@ class BootSector():
     def bytesPerContainer(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x40:0x48])
 
-    def superBlockOffset(self):
+    def superBlockOffset(self) -> int:
         return 0x1e * self.sectorsPerCluster() * self.bytesPerSector()
 
     def info(self) -> str:
