@@ -59,4 +59,4 @@ class BootSector():
               f"[+] Volume size: {self.bytesPerSector() * self.sectorCount():,} bytes\n"\
               f"[+] Container size: {self.bytesPerContainer():,} bytes\n"\
               f"[+] Volume Serial Number: {self.volumeSerialNumber()}\n"\
-              "<<=====================================================>>\n"
+              f"<<=======================================================>>\n"
