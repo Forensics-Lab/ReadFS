@@ -40,4 +40,4 @@ class PageDescriptor:
                f"[+] Checksum Type: {self.checksumType()}\n"\
                f"[+] Checksum Offset: {self.checksumOffset()}\n"\
                f"[+] Checksum Length: {self.checksumLength()}\n"\
-               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()]).info()}" 
+               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()]).info()}\n" 
