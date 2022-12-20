@@ -12,5 +12,4 @@ class Formater():
         return temp
 
     def toHex(self, _bytes: bytes) -> str:
-        temp = self.reverseBytes(_bytes).hex().upper()
-        return ' '.join([temp[i:i+2] for i in range(0, len(temp), 2)])
+        return self.reverseBytes(_bytes).hex().upper()

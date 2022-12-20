@@ -46,13 +46,16 @@ class BootSector():
     def superBlockOffset(self) -> int:
         return 0x1e * self.sectorsPerCluster() * self.bytesPerSector()
 
+    def clusterSize(self):
+        return self.sectorsPerCluster() * self.bytesPerSector()
+
     def info(self) -> str:
         return "<<=====================[Boot Sector]=====================>>\n"\
               f"[+] ReFS Version: {self.ReFSVersion()}\n"\
               f"[+] Super Block Offset: {self.superBlockOffset()} bytes\n"\
               f"[+] VBR Size: {self.sizeOfVBR()} bytes\n"\
               f"[+] Bytes per Sector: {self.bytesPerSector()}\n"\
-              f"[+] Cluster size: {self.sectorsPerCluster() * self.bytesPerSector():,} bytes\n"\
+              f"[+] Cluster size: {self.clusterSize():,} bytes\n"\
               f"[+] Sectors per Cluster: {self.sectorsPerCluster()}\n"\
               f"[+] Number of Clusters: {self.sectorCount()//self.sectorsPerCluster():,}\n"\
               f"[+] Number of Sectors: {self.sectorCount():,}\n"\

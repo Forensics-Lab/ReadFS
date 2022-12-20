@@ -9,6 +9,12 @@ class Checkpoint:
         self.formater = Formater()
         self.pageheader = PageHeader(self.byteArray[0x0:0x50])
 
+    def _toCluster(self, byteNumber:int) -> int:
+        # This function needs twicking because after the ckecpoint is parsed the filesystem needs to first query the Container table ID
+        # This means that not all the pointers offsets are correct.
+        # The current output of checkpoint.info() will show the byte offset of all the pointers but please use only containerTablePointer I'll fix it once I understand how :D
+        return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])* len(self.byteArray) # len(self.byteArray represents the cluster size [65536 or 4096])
+
     def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])
 
@@ -41,7 +47,7 @@ class Checkpoint:
 
     def pointerList(self) -> list:
         plist = self.byteArray[0x94:0xC8]
-        plist = [self.formater.toDecimal(plist[i:i+4]) for i in range(0, len(plist), 4)]
+        plist = [self._toCluster(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)]
         return plist
 
     def objectIDPointer(self) -> int:
@@ -92,21 +98,20 @@ class Checkpoint:
                f"[+] Checkpoint Virtual Clock: {self.chkpVirtualClock()}\n"\
                f"[+] Allocator Virtual Clock: {self.allocatorVirtualClock()}\n"\
                f"[+] Oldest Log Record: {self.oldestLogRecordReference()}\n"\
-               f"[+] Alignment: {self.alignment()}\n"\
                f"[+] Reserved: {self.reserved()}\n"\
-               f"<<================[Pointers Offset Info]=================>>\n"\
+               f"<<============[Pointers Cluster Offset Info]=============>>\n"\
                f"[+] Count: {self.pointerCount()}\n"\
-               f"[+] Object ID Table: {self.objectIDPointer()} bytes\n"\
-               f"[+] Duplicate Object ID Table: {self.objectIDDuplicatePointer()} bytes\n"\
-               f"[+] Medium Allocator Table: {self.mediumAllocatorPointer()} bytes\n"\
-               f"[+] Container Allocator Table: {self.containerAllocatorPointer()} bytes\n"\
-               f"[+] Schema Table: {self.schemaTablePointer()} bytes\n"\
-               f"[+] Duplicate Schema Table: {self.schemaTableDuplicatePointer()} bytes\n"\
-               f"[+] Parent Child Table: {self.parentChildTablePointer()} bytes\n"\
-               f"[+] Block Reference Count Table: {self.blockReferenceCountPointer()} bytes\n"\
-               f"[+] Container Table: {self.containerTablePointer()} bytes\n"\
-               f"[+] Duplicate Container Table: {self.containerTablePointer()} bytes\n"\
-               f"[+] Container Index Table: {self.containerIndexTablePointer()} bytes\n"\
-               f"[+] Integrity State Table: {self.integrityStateTablePointer()} bytes\n"\
-               f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()} bytes\n"\
+               f"[+] Object ID Table: {self.objectIDPointer()}\n"\
+               f"[+] Duplicate Object ID Table: {self.objectIDDuplicatePointer()}\n"\
+               f"[+] Medium Allocator Table: {self.mediumAllocatorPointer()}\n"\
+               f"[+] Container Allocator Table: {self.containerAllocatorPointer()}\n"\
+               f"[+] Schema Table: {self.schemaTablePointer()}\n"\
+               f"[+] Duplicate Schema Table: {self.schemaTableDuplicatePointer()}\n"\
+               f"[+] Parent Child Table: {self.parentChildTablePointer()}\n"\
+               f"[+] Block Reference Count Table: {self.blockReferenceCountPointer()}\n"\
+               f"[+] Container Table: {self.containerTablePointer()}\n"\
+               f"[+] Duplicate Container Table: {self.containerTableDuplicatePointer()}\n"\
+               f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
+               f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
+               f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()}\n"\
                f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"

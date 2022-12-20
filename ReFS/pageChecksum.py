@@ -10,6 +10,6 @@ class PageChecksumData:
         return self.formater.toHex(self.byteArray)
 
     def info(self) -> str:
-        return f"<<=================[Page Checksum Data]==================>>\n"\
+        return f"<<=================[Page Data Checksum]==================>>\n"\
                f"[+] Page Data Checksum: {self.checksum()}\n"\
                f"<<=======================================================>>" 

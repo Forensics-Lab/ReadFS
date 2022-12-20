@@ -42,9 +42,9 @@ class PageHeader:
         return "<<=====================[Page Header]=====================>>\n"\
                f"[+] Page Signature: {self.pageSignature()}\n"\
                f"[+] Volume Signature: {self.volumeSignature()}\n"\
-               f"[+] LCN_0: {LCN_0} cluster\n"\
-               f"[+] LCN_1: {LCN_1} cluster\n"\
-               f"[+] LCN_2: {LCN_2} cluster\n"\
-               f"[+] LCN_3: {LCN_3} cluster\n"\
+               f"[+] LCN_0: {LCN_0}\n"\
+               f"[+] LCN_1: {LCN_1}\n"\
+               f"[+] LCN_2: {LCN_2}\n"\
+               f"[+] LCN_3: {LCN_3}\n"\
                f"[+] Table Identifier Low: {low}\n"\
                f"[+] Table Identifier High: {high}"
