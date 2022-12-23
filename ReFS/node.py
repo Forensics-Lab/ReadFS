@@ -1,5 +1,5 @@
 from typing import Union
-from ReFS.dataArea import DataArea
+from ReFS.dataArea import IndexKey
 from ReFS.pageHeader import PageHeader
 from ReFS.indexHeader import IndexHeader
 from bytesFormater.formater import Formater
@@ -27,10 +27,10 @@ class Node:
         keysNumber = indexHeader.keyIndexEntries()
         keysBlock = self.byteArray[keysStartOffset:keysEndOffset]
         keys = []
-        for i in range(0, keysNumber, 4):
+        for i in range(0, keysNumber * 4, 4):
             keyOffset = (self.formater.toDecimal(keysBlock[i:i+4]) & 0x0000ffff) + self.indexHeaderOffset
             keySize = self.formater.toDecimal(self.byteArray[keyOffset:keyOffset+0x4])
-            keys.append(DataArea(self.byteArray[keyOffset:keyOffset + keySize]))
+            keys.append(IndexKey(self.byteArray[keyOffset:keyOffset + keySize]))
         return tuple(keys)
 
     def info(self):

@@ -13,7 +13,7 @@ class Checkpoint:
         # This function needs twicking because after the ckecpoint is parsed the filesystem needs to first query the Container table ID
         # This means that not all the pointers offsets are correct.
         # The current output of checkpoint.info() will show the byte offset of all the pointers but please use only containerTablePointer I'll fix it once I understand how :D
-        return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])* len(self.byteArray) # len(self.byteArray represents the cluster size [65536 or 4096])
+        return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4]) #* len(self.byteArray) # len(self.byteArray represents the cluster size [65536 or 4096])
 
     def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])

@@ -48,6 +48,9 @@ class BootSector():
 
     def clusterSize(self):
         return self.sectorsPerCluster() * self.bytesPerSector()
+    
+    def numberOfContainers(self):
+        return (self.bytesPerSector() * self.sectorCount()) // self.bytesPerContainer()
 
     def info(self) -> str:
         return "<<=====================[Boot Sector]=====================>>\n"\
@@ -57,9 +60,10 @@ class BootSector():
               f"[+] Bytes per Sector: {self.bytesPerSector()}\n"\
               f"[+] Cluster size: {self.clusterSize():,} bytes\n"\
               f"[+] Sectors per Cluster: {self.sectorsPerCluster()}\n"\
+              f"[+] Number of Containers: {self.numberOfContainers()}\n"\
               f"[+] Number of Clusters: {self.sectorCount()//self.sectorsPerCluster():,}\n"\
               f"[+] Number of Sectors: {self.sectorCount():,}\n"\
-              f"[+] Volume size: {self.bytesPerSector() * self.sectorCount():,} bytes\n"\
               f"[+] Container size: {self.bytesPerContainer():,} bytes\n"\
+              f"[+] Volume size: {self.bytesPerSector() * self.sectorCount():,} bytes\n"\
               f"[+] Volume Serial Number: {self.volumeSerialNumber()}\n"\
               f"<<=======================================================>>\n"

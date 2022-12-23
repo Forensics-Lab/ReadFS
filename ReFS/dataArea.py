@@ -1,7 +1,7 @@
 from typing import Union
 from bytesFormater.formater import Formater
 
-class DataArea:
+class IndexKey: # Will need to re-think this class naming and functionality
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
         self.formater = Formater()
@@ -19,6 +19,8 @@ class DataArea:
         flagsStruct = {0x2:"Rightmost extent in a subtree", 0x4:"Deleted Entry", 0x40:"Stream Index Entry"}
         flagValue = self.formater.toDecimal(self.byteArray[0x8:0xA])
         # return flagsStruct[flagValue]
+        # I have to check if I look at the right bytes to determine flag
+        # For now the function is returning the flag value not type
         return flagValue
 
     def vlaueStartOffset(self):
