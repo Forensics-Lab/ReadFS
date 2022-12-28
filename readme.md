@@ -14,5 +14,5 @@ The project is aiming to fit the needs of a day-to-day user and help out in data
 For now, the tool will only be a command line/terminal utility but I haven't yet implemented the ability to pass flags to the script. With that said after cloning the repo please and acquiring your ReFS logical forensic image please modify line 9 in main.py with the path to your image.
 
 # Giving credit where credit is due
-This project wouldn't be possible or would be really hard to accoplish with out the help of a paper written by Paul Prade, Tobias Groß, Andreas Dewald from Friedrich Alexander University
+This project wouldn't be possible or would be really hard to accomplish without the help of a paper written by Paul Prade, Tobias Groß, Andreas Dewald from Friedrich Alexander University
 Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> https://doi.org/10.25593/issn.2191-5008/CS-2019-05
