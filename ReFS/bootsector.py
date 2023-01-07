@@ -46,11 +46,17 @@ class BootSector():
     def superBlockOffset(self) -> int:
         return 0x1e * self.sectorsPerCluster() * self.bytesPerSector()
 
-    def clusterSize(self):
+    def clusterSize(self) -> int:
         return self.sectorsPerCluster() * self.bytesPerSector()
     
-    def numberOfContainers(self):
+    def numberOfContainers(self) -> int:
         return (self.bytesPerSector() * self.sectorCount()) // self.bytesPerContainer()
+
+    def numberOfClusters(self) -> int:
+        return self.sectorCount() // self.sectorsPerCluster()
+
+    def numberOfClustersPerContainer(self) -> int:
+        return self.numberOfClusters() // self.numberOfContainers()
 
     def info(self) -> str:
         return "<<=====================[Boot Sector]=====================>>\n"\
@@ -60,8 +66,9 @@ class BootSector():
               f"[+] Bytes per Sector: {self.bytesPerSector()}\n"\
               f"[+] Cluster size: {self.clusterSize():,} bytes\n"\
               f"[+] Sectors per Cluster: {self.sectorsPerCluster()}\n"\
+              f"[+] Clusters per Container: {self.numberOfClustersPerContainer():,}\n"\
               f"[+] Number of Containers: {self.numberOfContainers()}\n"\
-              f"[+] Number of Clusters: {self.sectorCount()//self.sectorsPerCluster():,}\n"\
+              f"[+] Number of Clusters: {self.numberOfClusters():,}\n"\
               f"[+] Number of Sectors: {self.sectorCount():,}\n"\
               f"[+] Container size: {self.bytesPerContainer():,} bytes\n"\
               f"[+] Volume size: {self.bytesPerSector() * self.sectorCount():,} bytes\n"\

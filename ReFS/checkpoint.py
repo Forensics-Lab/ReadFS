@@ -3,17 +3,22 @@ from ReFS.pageHeader import PageHeader
 from bytesFormater.formater import Formater
 from ReFS.pageDescriptor import PageDescriptor
 
+
+
+'''
+This Class will get the container list to corectly interpret the other table pointers.
+The function which will do this is _toCluster 
+'''
+
 class Checkpoint:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _containersList: list = []) -> None:
         self.byteArray = byteArray
         self.formater = Formater()
         self.pageheader = PageHeader(self.byteArray[0x0:0x50])
+        self._containerList = _containersList
 
-    def _toCluster(self, byteNumber:int) -> int:
-        # This function needs twicking because after the ckecpoint is parsed the filesystem needs to first query the Container table ID
-        # This means that not all the pointers offsets are correct.
-        # The current output of checkpoint.info() will show the byte offset of all the pointers but please use only containerTablePointer I'll fix it once I understand how :D
-        return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4]) #* len(self.byteArray) # len(self.byteArray represents the cluster size [65536 or 4096])
+    def _toCluster(self, byteNumber:int, _containerList: list = []) -> int:
+        return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])
 
     def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])

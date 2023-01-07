@@ -31,14 +31,28 @@ class PageHeader:
         LCN_3 = self.formater.toDecimal(self.byteArray[0x38:0x40])
         return LCN_0, LCN_1, LCN_2, LCN_3
 
-    def tableIdentifier(self) -> tuple:
-        high = self.formater.toDecimal(self.byteArray[0x40:0x48]) 
+    def tableIdentifier(self) -> str:
+        identifiersStruct = {0x2: "Object ID",
+                             0x21: "Medium Allocator",
+                             0x20: "Container Allocator",
+                             0x1: "Schema",
+                             0x3: "Parent Child",
+                             0x4: "Object ID (Duplicate)",
+                             0x5: "Block Reference Count",
+                             0xb: "Container",
+                             0xC: "Container (Duplicate)",
+                             0x6: "Schema (Duplicate)",
+                             0xE: "Container Index",
+                             0xF: "Integrity State",
+                             0x22: "Small Allocator"}
+
+        high = self.formater.toDecimal(self.byteArray[0x40:0x48])
         low = self.formater.toDecimal(self.byteArray[0x48:0x50])
-        return high, low
+        identifier = high + low
+        return identifiersStruct[identifier] if identifier in identifiersStruct else "Not A Table"
 
     def info(self) -> str:
         LCN_0,LCN_1,LCN_2,LCN_3 = self.LCNS()
-        high, low = self.tableIdentifier()
         return "<<=====================[Page Header]=====================>>\n"\
                f"[+] Page Signature: {self.pageSignature()}\n"\
                f"[+] Volume Signature: {self.volumeSignature()}\n"\
@@ -46,5 +60,4 @@ class PageHeader:
                f"[+] LCN_1: {LCN_1}\n"\
                f"[+] LCN_2: {LCN_2}\n"\
                f"[+] LCN_3: {LCN_3}\n"\
-               f"[+] Table Identifier Low: {low}\n"\
-               f"[+] Table Identifier High: {high}"
+               f"[+] Table Type: {self.tableIdentifier()}"

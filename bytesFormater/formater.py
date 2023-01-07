@@ -1,4 +1,3 @@
-
 class Formater():
     def toDecimal(self, _bytes: bytes, order: str = "little") -> int:
         return int.from_bytes(_bytes, order)

@@ -6,33 +6,33 @@ class IndexHeader:
         self.byteArray = byteArray
         self.formater = Formater()
 
-    def dataAreaOffsetStart(self):
+    def dataAreaOffsetStart(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])
 
-    def dataAreaOffsetEnd(self):
+    def dataAreaOffsetEnd(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x4:0x8])
 
-    def nodesFreeBytes(self):
+    def nodesFreeBytes(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x8:0xC])
 
-    def nodeHeight(self):
+    def nodeHeight(self) -> int:
         return self.formater.toDecimal(self.byteArray[0xC:0xD])
 
-    def flag(self):
+    def flag(self) -> str:
         flagsStruct = {0x1:"Iner", 0x2:"Root", 0x4:"Stream"}
         flagValue = self.formater.toDecimal(self.byteArray[0xD:0xE])
         return flagsStruct[flagValue]
 
-    def keyIndexStart(self):
+    def keyIndexStart(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x10:0x14])
 
-    def keyIndexEntries(self):
+    def keyIndexEntries(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x14:0x18])
 
-    def keyIndexEnd(self):
+    def keyIndexEnd(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x20:0x24])
 
-    def info(self):
+    def info(self) -> str:
         return f"<<====================[Index Header]=====================>>\n"\
                f"[+] Node Type: {self.flag()}\n"\
                f"[+] Node Height: {self.nodeHeight()}\n"\

@@ -1,5 +1,5 @@
 from typing import Union
-from ReFS.dataArea import IndexKey
+from ReFS.dataArea import IndexEntries
 from ReFS.pageHeader import PageHeader
 from ReFS.indexHeader import IndexHeader
 from bytesFormater.formater import Formater
@@ -12,28 +12,25 @@ class Node:
         self.pageheader = PageHeader(self.byteArray[0x0:0x50])
         self.indexHeaderOffset = self.indexRoot().size() + 0x50
 
-    def indexRoot(self):
+    def indexRoot(self) -> IndexRootElement:
         size = self.formater.toDecimal(self.byteArray[0x50:0x50+0x4])
         indexRootType = self.formater.toDecimal(self.byteArray[size+0x50+0xD:size+0x50+0xE])
         return IndexRootElement(self.byteArray[0x50:0x50 + size], indexType=indexRootType)
 
-    def indexHeader(self):
+    def indexHeader(self) -> IndexHeader:
         return IndexHeader(self.byteArray[self.indexHeaderOffset:self.indexHeaderOffset + 0x28])
 
-    def dataArea(self):
+    def dataArea(self) -> IndexEntries:
+        # this function will need refoctoring.
+        # the plan is to find a cleaner way to get the key:value pairs from the data area within the Container Table.
         indexHeader = self.indexHeader()
         keysStartOffset = indexHeader.keyIndexStart() + self.indexHeaderOffset
         keysEndOffset = indexHeader.keyIndexEnd() + self.indexHeaderOffset
         keysNumber = indexHeader.keyIndexEntries()
         keysBlock = self.byteArray[keysStartOffset:keysEndOffset]
-        keys = []
-        for i in range(0, keysNumber * 4, 4):
-            keyOffset = (self.formater.toDecimal(keysBlock[i:i+4]) & 0x0000ffff) + self.indexHeaderOffset
-            keySize = self.formater.toDecimal(self.byteArray[keyOffset:keyOffset+0x4])
-            keys.append(IndexKey(self.byteArray[keyOffset:keyOffset + keySize]))
-        return tuple(keys)
+        return IndexEntries(self.byteArray, keysBlock, keysNumber, self.indexHeaderOffset)
 
-    def info(self):
+    def info(self) -> str:
         return f"{self.pageheader.info()}\n"\
                f"{self.indexRoot().info()}\n"\
-               f"{self.indexHeader().info()}"\
+               f"{self.indexHeader().info()}"
