@@ -1,13 +1,16 @@
 # About the project
-This idea started after I choose my university final year project and I learned that Microsoft has developed a new file system that removes some limitations that NTFS has and deals better with data corruption. After looking around to see if there are any tools or pieces of software 
 
-The project is aiming to fit the needs of a day-to-day user and help out in data loss recovery, also I want to build a robust, powerful, and easy-to-use framework for forensic applications in which the logical/physical forensic image is formatted with ReFS.
+This started after I choose my university final year project and I learned that Microsoft has developed a new file system that removes some limitations that NTFS has and deals better with data corruption. After looking around to see if there are any tools or pieces of software that can parse this type of file system I could only find 5 products which have support for ReFS but I think those tools can be improved. 
+
+With that said, this project aims to fit the needs of a day-to-day user and help out with data loss recovery and forensics investigations. The plan is to build a console-based utility for windows/linux or users that prefer running things from their console and a graphical user interface for the a day-to-day user. 
 
 # Giving credit where credit is due
+
 This project wouldn't be possible or would be really hard to accomplish without the help of a paper written by Paul Prade, Tobias Groß, Andreas Dewald from Friedrich Alexander University
 Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> https://doi.org/10.25593/issn.2191-5008/CS-2019-05
 
 # Current capabilities
+
 - The ability to correctly parse and output information from the following:
     - Boot sector
     - Superblock
@@ -15,10 +18,12 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
     - Nodes
 
 # Usage
+
 To display general information about the forensic image you will need to pass the -ii or --image_info flags. See the example bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -ii
-
+```
+```
 <<=====================[Boot Sector]=====================>>
 [+] ReFS Version: 3.4
 [+] Super Block Offset: 1966080 bytes
@@ -41,7 +46,8 @@ As I said, in the mean time, please use the bellow command to get the informatio
 
 ```cmd
 $> py main.py -f path/to/file.001 -bi superblock
-
+```
+```
 <<=====================[Page Header]=====================>>
 [+] Page Signature: SUPB
 [+] Volume Signature: 5C1FB1E2
@@ -73,7 +79,8 @@ $> py main.py -f path/to/file.001 -bi superblock
 You can do the exact same thing with the Checkpoint:
 ```cmd
 $> py main.py -f path/to/file.001 -bi superblock
-
+```
+```
 <<=====================[Page Header]=====================>>
 [+] Page Signature: CHKP
 [+] Volume Signature: 5C1FB1E2
