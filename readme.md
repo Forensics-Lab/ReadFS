@@ -16,7 +16,7 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
 
 # Usage
 To display general information about the forensic image you will need to pass the -ii or --image_info flags. See the example bellow:
-```bash
+```cmd
 $> py main.py -f path/to/file.001 -ii
 
 <<=====================[Boot Sector]=====================>>
@@ -39,7 +39,7 @@ $> py main.py -f path/to/file.001 -ii
 At this stage in development the tool is able to parse the data found in the Superblock, Checkpoint and individual Table Nodes but I didn't implement a flag that allows you to view data by passing a offset to a node yet. 
 As I said, in the mean time, please use the bellow command to get the information stored in the Superblock:
 
-```bash
+```cmd
 $> py main.py -f path/to/file.001 -bi superblock
 
 <<=====================[Page Header]=====================>>
@@ -71,7 +71,7 @@ $> py main.py -f path/to/file.001 -bi superblock
 <<=======================================================>>
 ```
 You can do the exact same thing with the Checkpoint:
-```bash
+```cmd
 $> py main.py -f path/to/file.001 -bi superblock
 
 <<=====================[Page Header]=====================>>
@@ -122,7 +122,7 @@ I am in the process of implementing the algorithm that translates virtual-to-phy
 
 # What's next?
 - Implementing the algorithm needed to translate virtual addresses to physical ones.
-- Corectly displaying the offsets of all the tables in the file system.
+- Correctly displaying the offsets of all the tables in the file system.
 - Adding support for the rest of the tables in the file system.
 - Implementing ways to view the files/folders present in the forensic image. (Deleted or not)
 - Adding the ability to recover deleted or non-deleted files/folders from the forensic image.
