@@ -78,7 +78,7 @@ $> py main.py -f path/to/file.001 -bi superblock
 ```
 You can do the exact same thing with the Checkpoint:
 ```cmd
-$> py main.py -f path/to/file.001 -bi superblock
+$> py main.py -f path/to/file.001 -bi checkpoint
 ```
 ```
 <<=====================[Page Header]=====================>>
