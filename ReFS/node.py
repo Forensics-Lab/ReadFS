@@ -2,23 +2,22 @@ from typing import Union
 from ReFS.dataArea import IndexEntries
 from ReFS.pageHeader import PageHeader
 from ReFS.indexHeader import IndexHeader
-from bytesFormater.formater import Formater
 from ReFS.indexRootElement import IndexRootElement
 
 class Node:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
-        self.pageheader = PageHeader(self.byteArray[0x0:0x50])
+        self.formater = _formater
+        self.pageheader = PageHeader(self.byteArray[0x0:0x50], _formater)
         self.indexHeaderOffset = self.indexRoot().size() + 0x50
 
     def indexRoot(self) -> IndexRootElement:
         size = self.formater.toDecimal(self.byteArray[0x50:0x50+0x4])
         indexRootType = self.formater.toDecimal(self.byteArray[size+0x50+0xD:size+0x50+0xE])
-        return IndexRootElement(self.byteArray[0x50:0x50 + size], indexType=indexRootType)
+        return IndexRootElement(self.byteArray[0x50:0x50 + size], self.formater, indexType=indexRootType)
 
     def indexHeader(self) -> IndexHeader:
-        return IndexHeader(self.byteArray[self.indexHeaderOffset:self.indexHeaderOffset + 0x28])
+        return IndexHeader(self.byteArray[self.indexHeaderOffset:self.indexHeaderOffset + 0x28], self.formater)
 
     def dataArea(self) -> IndexEntries:
         # this function will need refoctoring.
@@ -28,7 +27,7 @@ class Node:
         keysEndOffset = indexHeader.keyIndexEnd() + self.indexHeaderOffset
         keysNumber = indexHeader.keyIndexEntries()
         keysBlock = self.byteArray[keysStartOffset:keysEndOffset]
-        return IndexEntries(self.byteArray, keysBlock, keysNumber, self.indexHeaderOffset)
+        return IndexEntries(self.byteArray, keysBlock, keysNumber, self.indexHeaderOffset, self.formater)
 
     def info(self) -> str:
         return f"{self.pageheader.info()}\n"\

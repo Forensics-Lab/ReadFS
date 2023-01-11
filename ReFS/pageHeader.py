@@ -2,9 +2,9 @@ from typing import Union
 from bytesFormater.formater import Formater
 
 class PageHeader:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
+        self.formater = _formater
 
     def pageSignature(self) -> str:
         return self.formater.toString(self.byteArray[0x0:0x4])

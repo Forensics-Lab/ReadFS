@@ -1,10 +1,10 @@
 from typing import Union
-from bytesFormater.formater import Formater
+
 
 class PageChecksumData:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
+        self.formater = _formater
 
     def checksum(self) -> str:
         return self.formater.toHex(self.byteArray)

@@ -1,11 +1,10 @@
 from typing import Union
-from bytesFormater.formater import Formater
 from ReFS.pageChecksum import PageChecksumData
 
 class PageDescriptor:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
+        self.formater = _formater
 
     def LCNS(self) -> list:
         LCN_0 = self.formater.toDecimal(self.byteArray[0x0:0x08])
@@ -34,4 +33,4 @@ class PageDescriptor:
                f"[+] Checksum Type: {self.checksumType()}\n"\
                f"[+] Checksum Offset: {self.checksumOffset()}\n"\
                f"[+] Checksum Length: {self.checksumLength()}\n"\
-               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()]).info()}\n" 
+               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()], self.formater).info()}" 

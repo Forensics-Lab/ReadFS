@@ -1,10 +1,10 @@
 from typing import Union
-from bytesFormater.formater import Formater
 
 class BootSector():
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
+        self.formater = _formater
+        self.formater.continerSize = self.bytesPerContainer()
 
     def assemblyCode(self) -> str:
         return self.formater.toHex(self.byteArray[0x0:0x03])
@@ -73,4 +73,4 @@ class BootSector():
               f"[+] Container size: {self.bytesPerContainer():,} bytes\n"\
               f"[+] Volume size: {self.bytesPerSector() * self.sectorCount():,} bytes\n"\
               f"[+] Volume Serial Number: {self.volumeSerialNumber()}\n"\
-              f"<<=======================================================>>\n"
+              f"<<=======================================================>>"

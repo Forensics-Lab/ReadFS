@@ -1,24 +1,31 @@
 from typing import Union
+from ReFS.node import Node
 from ReFS.pageHeader import PageHeader
-from bytesFormater.formater import Formater
 from ReFS.pageDescriptor import PageDescriptor
 
-
-
-'''
-This Class will get the container list to corectly interpret the other table pointers.
-The function which will do this is _toCluster 
-'''
-
 class Checkpoint:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _containersList: list = []) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
-        self.pageheader = PageHeader(self.byteArray[0x0:0x50])
-        self._containerList = _containersList
+        self.formater = _formater
+        self.pageheader = PageHeader(self.byteArray[0x0:0x50], _formater)
+        self._pointerList = self.pointerList()
 
-    def _toCluster(self, byteNumber:int, _containerList: list = []) -> int:
+    def _getVirtualCluster(self, byteNumber:int) -> int:
         return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])
+
+    def _realAddressClusters(self, virtualAddresses: list) -> list:
+        containerTableOffset = virtualAddresses[7] * len(self.byteArray)
+        containerTable = Node(self.formater.getBytes([0x0, len(self.byteArray)], containerTableOffset), self.formater).dataArea()
+        entries = containerTable.getEntries()
+        plist = []
+        for index, address in enumerate(virtualAddresses):
+            if index not in (7, 8, 12): # Skipping Container Table, Container Table Duplicate and Small Allocator Table
+                containerComponent = int(hex(address)[2]) - 1
+                offsetComponent = int(hex(address)[3:], 16)
+                address = hex(entries[containerComponent]["x"]["Container LCN"])[:-2]
+                address = (int(address, 16) + offsetComponent) * len(self.byteArray)
+            plist.append(address)
+        return plist
 
     def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])
@@ -52,47 +59,48 @@ class Checkpoint:
 
     def pointerList(self) -> list:
         plist = self.byteArray[0x94:0xC8]
-        plist = [self._toCluster(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)]
+        plist = [self._getVirtualCluster(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)]
+        plist = self._realAddressClusters(plist)
         return plist
 
     def objectIDPointer(self) -> int:
-        return self.pointerList()[0]
+        return self._pointerList[0]
 
     def mediumAllocatorPointer(self) -> int:
-        return self.pointerList()[1]
+        return self._pointerList[1]
 
     def containerAllocatorPointer(self) -> int:
-        return self.pointerList()[2]
+        return self._pointerList[2]
 
     def schemaTablePointer(self) -> int:
-        return self.pointerList()[3]
+        return self._pointerList[3]
 
     def parentChildTablePointer(self) -> int:
-        return self.pointerList()[4]
+        return self._pointerList[4]
 
     def objectIDDuplicatePointer(self) -> int:
-        return self.pointerList()[5]
+        return self._pointerList[5]
 
     def blockReferenceCountPointer(self) -> int:
-        return self.pointerList()[6]
+        return self._pointerList[6]
 
     def containerTablePointer(self) -> int:
-        return self.pointerList()[7]
+        return self._pointerList[7]
 
     def containerTableDuplicatePointer(self) -> int:
-        return self.pointerList()[8]
+        return self._pointerList[8]
 
     def schemaTableDuplicatePointer(self) -> int:
-        return self.pointerList()[9]
+        return self._pointerList[9]
 
     def containerIndexTablePointer(self) -> int:
-        return self.pointerList()[10]
+        return self._pointerList[10]
 
     def integrityStateTablePointer(self) -> int:
-        return self.pointerList()[11]
+        return self._pointerList[11]
 
     def smallAllocatorTablePointer(self) -> int:
-        return self.pointerList()[12]
+        return self._pointerList[12]
 
     def info(self) -> str:
         return f"{self.pageheader.info()}\n"\
@@ -114,9 +122,9 @@ class Checkpoint:
                f"[+] Duplicate Schema Table: {self.schemaTableDuplicatePointer()}\n"\
                f"[+] Parent Child Table: {self.parentChildTablePointer()}\n"\
                f"[+] Block Reference Count Table: {self.blockReferenceCountPointer()}\n"\
-               f"[+] Container Table: {self.containerTablePointer()}\n"\
-               f"[+] Duplicate Container Table: {self.containerTableDuplicatePointer()}\n"\
+               f"[+] Container Table: {self.containerTablePointer() * len(self.byteArray)}\n"\
+               f"[+] Duplicate Container Table: {self.containerTableDuplicatePointer() * len(self.byteArray)}\n"\
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
-               f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()}\n"\
-               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"
+               f"[+] Small Allocator Table: {self.smallAllocatorTablePointer() * len(self.byteArray)}\n"\
+               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()], self.formater).info()}"

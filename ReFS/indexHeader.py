@@ -1,10 +1,9 @@
 from typing import Union
-from bytesFormater.formater import Formater
 
 class IndexHeader:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
         self.byteArray = byteArray
-        self.formater = Formater()
+        self.formater = _formater
 
     def dataAreaOffsetStart(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])
