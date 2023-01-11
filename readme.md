@@ -126,9 +126,6 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 ```
 
 # What's next?
-
-- Implementing the algorithm needed to translate virtual addresses to physical ones.
-- Correctly displaying the offsets of all the tables in the file system.
 - Adding support for the rest of the tables in the file system.
 - Implementing ways to view the files/folders present in the forensic image. (Deleted or not)
 - Adding the ability to recover deleted or non-deleted files/folders from the forensic image.
