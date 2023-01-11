@@ -97,21 +97,21 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 [+] Allocator Virtual Clock: 13
 [+] Oldest Log Record: 2
 [+] Reserved: 0
-<<============[Pointers Cluster Offset Info]=============>>
+<<=============[Pointers Bytes Offset Info]==============>>
 [+] Count: 13
-[+] Object ID Table: 4618
-[+] Duplicate Object ID Table: 4619
-[+] Medium Allocator Table: 29187
-[+] Container Allocator Table: 28673
-[+] Schema Table: 4141
-[+] Duplicate Schema Table: 4142
-[+] Parent Child Table: 4620
-[+] Block Reference Count Table: 28675
-[+] Container Table: 1027
-[+] Duplicate Container Table: 1028
-[+] Container Index Table: 4137
-[+] Integrity State Table: 28674
-[+] Small Allocator Table: 1030
+[+] Object ID Table: 34209792
+[+] Duplicate Object ID Table: 34275328
+[+] Medium Allocator Table: 36896768
+[+] Container Allocator Table: 3211264
+[+] Schema Table: 2949120
+[+] Duplicate Schema Table: 3014656
+[+] Parent Child Table: 34340864
+[+] Block Reference Count Table: 3342336
+[+] Container Table: 67305472
+[+] Duplicate Container Table: 67371008
+[+] Container Index Table: 2686976
+[+] Integrity State Table: 3276800
+[+] Small Allocator Table: 67502080
 <<================[Self Page Descriptor]=================>>
 [+] LCN_0: 844
 [+] LCN_1: 0
@@ -124,10 +124,9 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 [+] Page Data Checksum: 4FE421E97BEC00C5
 <<=======================================================>>
 ```
-## !! IMPORTANT !!!
-I am in the process of implementing the algorithm that translates virtual-to-physical addresses used by ReFS. With that said the only usable offset from the pointers section is the Container Table and the Duplicate Container Table because they hold  the needed information for this process. 
 
 # What's next?
+
 - Implementing the algorithm needed to translate virtual addresses to physical ones.
 - Correctly displaying the offsets of all the tables in the file system.
 - Adding support for the rest of the tables in the file system.

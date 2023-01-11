@@ -112,7 +112,7 @@ class Checkpoint:
                f"[+] Allocator Virtual Clock: {self.allocatorVirtualClock()}\n"\
                f"[+] Oldest Log Record: {self.oldestLogRecordReference()}\n"\
                f"[+] Reserved: {self.reserved()}\n"\
-               f"<<============[Pointers Cluster Offset Info]=============>>\n"\
+               f"<<=============[Pointers Bytes Offset Info]==============>>\n"\
                f"[+] Count: {self.pointerCount()}\n"\
                f"[+] Object ID Table: {self.objectIDPointer()}\n"\
                f"[+] Duplicate Object ID Table: {self.objectIDDuplicatePointer()}\n"\
