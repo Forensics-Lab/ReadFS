@@ -1,6 +1,6 @@
+from ReFS.page import *
 from typing import Union
 from ReFS.dataArea import IndexEntries
-from ReFS.pageHeader import PageHeader
 from ReFS.indexHeader import IndexHeader
 from ReFS.indexRootElement import IndexRootElement
 

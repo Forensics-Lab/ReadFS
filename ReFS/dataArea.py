@@ -1,5 +1,4 @@
 from typing import Union
-from bytesFormater.formater import Formater
 
 '''
 This whole class will be refactored but for now it does the job.
