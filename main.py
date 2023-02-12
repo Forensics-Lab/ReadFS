@@ -1,9 +1,7 @@
 import argparse
-from ReFS.node import Node
 from ReFS.bootsector import BootSector
 from ReFS.superblock import Superblock
 from ReFS.checkpoint import Checkpoint
-from bytesFormater.formater import Formater
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help = "Path to file.", metavar='', required=True)
@@ -13,13 +11,12 @@ args = parser.parse_args()
 
 
 def main():
-    formater = Formater(args.file)
-    bootSector = BootSector(formater.getBytes([0x0, 0x48]), formater)
+    bootSector = BootSector(args.file, [0x0, 0x48])
     clusterSize = bootSector.clusterSize()
     superblockOffset = bootSector.superBlockOffset()
-    superblock = Superblock(formater.getBytes([0x0, clusterSize], superblockOffset), formater)
+    superblock = Superblock(args.file, [0x0, clusterSize], superblockOffset)
     checkpointOffset = superblock.checkpointOffset()[0]
-    checkpoint = Checkpoint(formater.getBytes([0x0, clusterSize], checkpointOffset), formater)
+    checkpoint = Checkpoint(args.file, [0x0, clusterSize], checkpointOffset)
 
     if args.image_info:
         print(bootSector.info())

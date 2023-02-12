@@ -1,20 +1,20 @@
 from ReFS.page import *
-from typing import Union
 from ReFS.node import Node
+from bytesReader.reader import Reader
 
-class Checkpoint:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
-        self.byteArray = byteArray
-        self.formater = _formater
-        self.pageheader = PageHeader(self.byteArray[0x0:0x50], _formater)
-        self._pointerList = self.pointerList()
+class Checkpoint(Reader):
+    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
+        super().__init__(filePath)
+        self.byteArray = super().getBytes(readByteRange, offset=offset)
+        self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
+        self.__pointerList = self.pointerList()
 
     def _getVirtualCluster(self, byteNumber:int) -> int:
         return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])
 
     def _realAddressClusters(self, virtualAddresses: list) -> list:
         containerTableOffset = virtualAddresses[7] * len(self.byteArray)
-        containerTable = Node(self.formater.getBytes([0x0, len(self.byteArray)], containerTableOffset), self.formater).dataArea()
+        containerTable = Node(self.file, [0x0, len(self.byteArray)], containerTableOffset).dataArea()
         entries = containerTable.getEntries()
         plist = []
         for index, address in enumerate(virtualAddresses):
@@ -63,46 +63,46 @@ class Checkpoint:
         return plist
 
     def objectIDPointer(self) -> int:
-        return self._pointerList[0]
+        return self.__pointerList[0]
 
     def mediumAllocatorPointer(self) -> int:
-        return self._pointerList[1]
+        return self.__pointerList[1]
 
     def containerAllocatorPointer(self) -> int:
-        return self._pointerList[2]
+        return self.__pointerList[2]
 
     def schemaTablePointer(self) -> int:
-        return self._pointerList[3]
+        return self.__pointerList[3]
 
     def parentChildTablePointer(self) -> int:
-        return self._pointerList[4]
+        return self.__pointerList[4]
 
     def objectIDDuplicatePointer(self) -> int:
-        return self._pointerList[5]
+        return self.__pointerList[5]
 
     def blockReferenceCountPointer(self) -> int:
-        return self._pointerList[6]
+        return self.__pointerList[6]
 
     def containerTablePointer(self) -> int:
-        return self._pointerList[7]
+        return self.__pointerList[7]
 
     def containerTableDuplicatePointer(self) -> int:
-        return self._pointerList[8]
+        return self.__pointerList[8]
 
     def schemaTableDuplicatePointer(self) -> int:
-        return self._pointerList[9]
+        return self.__pointerList[9]
 
     def containerIndexTablePointer(self) -> int:
-        return self._pointerList[10]
+        return self.__pointerList[10]
 
     def integrityStateTablePointer(self) -> int:
-        return self._pointerList[11]
+        return self.__pointerList[11]
 
     def smallAllocatorTablePointer(self) -> int:
-        return self._pointerList[12]
+        return self.__pointerList[12]
 
     def info(self) -> str:
-        return f"{self.pageheader.info()}\n"\
+        return f"{self.pageHeader.info()}\n"\
                f"<<======================[Checkpoint]=====================>>\n"\
                f"[+] ReFS Version: {self.majorVersion()}.{self.minorVersion()}\n"\
                f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()}\n"\
@@ -126,4 +126,4 @@ class Checkpoint:
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
                f"[+] Small Allocator Table: {self.smallAllocatorTablePointer() * len(self.byteArray)}\n"\
-               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()], self.formater).info()}"
+               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"

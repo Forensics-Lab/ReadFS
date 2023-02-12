@@ -1,9 +1,10 @@
 from typing import Union
+from bytesReader.bytesFormater import Formater
 
 class PageHeader:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
-        self.formater = _formater
+        self.formater = Formater()
 
     def pageSignature(self) -> str:
         return self.formater.toString(self.byteArray[0x0:0x4])
@@ -62,9 +63,9 @@ class PageHeader:
                f"[+] Table Type: {self.tableIdentifier()}"
 
 class PageDescriptor:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
-        self.formater = _formater
+        self.formater = Formater()
 
     def LCNS(self) -> list:
         LCN_0 = self.formater.toDecimal(self.byteArray[0x0:0x08])
@@ -93,12 +94,12 @@ class PageDescriptor:
                f"[+] Checksum Type: {self.checksumType()}\n"\
                f"[+] Checksum Offset: {self.checksumOffset()}\n"\
                f"[+] Checksum Length: {self.checksumLength()}\n"\
-               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()], self.formater).info()}"
+               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()]).info()}"
 
 class PageChecksumData:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
-        self.formater = _formater
+        self.formater = Formater()
 
     def checksum(self) -> str:
         return self.formater.toHex(self.byteArray)

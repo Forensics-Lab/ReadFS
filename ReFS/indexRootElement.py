@@ -1,11 +1,11 @@
 from typing import Union
-
+from bytesReader.bytesFormater import Formater
 
 class IndexRootElement:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater, indexType:int=2) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], indexType:int) -> None:
         self.byteArray = byteArray
-        self.formater = _formater
         self.indexType = indexType
+        self.formater = Formater()
 
     def size(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])

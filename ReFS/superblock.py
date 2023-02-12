@@ -1,11 +1,11 @@
 from ReFS.page import *
-from typing import Union
+from bytesReader.reader import Reader
 
-class Superblock:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
-        self.byteArray = byteArray
-        self.pageHeader = PageHeader(self.byteArray[0x0:0x50], _formater)
-        self.formater = _formater
+class Superblock(Reader):
+    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
+        super().__init__(filePath)
+        self.byteArray = super().getBytes(readByteRange, offset=offset)
+        self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
 
     def GUID(self) -> str:
         temp = [self.formater.reverseBytes(self.byteArray[0x50:0x60][i:i+4]) for i in range(0, len(self.byteArray[0x50:0x60]), 4)]
@@ -43,4 +43,4 @@ class Superblock:
                f"[+] Checkpoint2 Offset: {checkpoint2} bytes\n"\
                f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()} bytes\n"\
                f"[+] Self Descriptor Length: {self.selfDescriptorLength()} bytes\n"\
-               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()], self.formater).info()}"\
+               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"

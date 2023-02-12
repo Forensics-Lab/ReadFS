@@ -1,10 +1,9 @@
-from typing import Union
+from bytesReader.reader import Reader
 
-class BootSector():
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], _formater) -> None:
-        self.byteArray = byteArray
-        self.formater = _formater
-        self.formater.continerSize = self.bytesPerContainer()
+class BootSector(Reader):
+    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
+        super().__init__(filePath)
+        self.byteArray = super().getBytes(readByteRange, offset=offset)
 
     def assemblyCode(self) -> str:
         return self.formater.toHex(self.byteArray[0x0:0x03])

@@ -1,4 +1,5 @@
 from typing import Union
+from bytesReader.bytesFormater import Formater
 
 '''
 This whole class will be refactored but for now it does the job.
@@ -8,9 +9,9 @@ The thing is that there are 13 tables in ReFS and each of them has different str
 '''
 
 class IndexEntries:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysBlock, keysNumber, indexHeaderRelativeOffset, _formater) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysBlock, keysNumber, indexHeaderRelativeOffset) -> None:
         self.byteArray = byteArray
-        self.formater = _formater
+        self.formater = Formater()
         self.keysBlock = keysBlock
         self.keysNumber = keysNumber
         self.indexHeaderRelativeOffset = indexHeaderRelativeOffset
@@ -50,7 +51,6 @@ class IndexEntries:
                                     "Flag":self.formater.toDecimal(_bytes[16:][0x10:0x11]),
                                     "Empty Clusters":1024 - self.formater.toDecimal(_bytes[16:][0x20:0x28]),
                                     "Container LCN": self.formater.toDecimal(_bytes[16:][0xD0:0xD8]),
-                                    # "Container LCN": _bytes[16:][0xD0:0xD8],
                                     "Clusters Per Container": self.formater.toDecimal(_bytes[16:][0xD8:0xE0])}}
         return entryGeneralHeader
 
