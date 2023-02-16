@@ -2,7 +2,7 @@
 
 This project started after I learned that Microsoft has developed a new file system that removes some limitations that NTFS has and deals better with data corruption. After looking around to see if there are any tools or pieces of software that can parse this type of file system I could only find 5 products which have support for ReFS but I think those tools can be improved. 
 
-With that said, this project aims to fit the needs of a day-to-day user and help out with data loss recovery and forensics investigations. The plan is to build a console-based utility for windows or linux that will help forensic investigators parse ReFS foremated disks images. 
+With that said, this project aims to fit the needs of a day-to-day user and help out with data loss recovery and forensics investigations. The plan is to build a console-based utility for windows or linux that will help forensic investigators parse ReFS foremated disks images created by FTK Imager.
 
 # Giving credit where credit is due
 
