@@ -1,15 +1,18 @@
 from typing import Union
 from bytesReader.bytesFormater import Formater
 
-class IndexRootElement:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], indexType:int) -> None:
+class IndexElement:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
-        self.indexType = indexType
         self.formater = Formater()
 
     def size(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])
 
+class IndexRootElement(IndexElement):
+    def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+        super().__init__(byteArray)
+    
     def rootFixedSize(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x4:0x6])
     
@@ -30,17 +33,27 @@ class IndexRootElement:
         return self.byteArray[0x28:variableComponentSize]
 
     def _rootIndexType(self) -> str:
-        return f"[+] Root Fixed Size: {self.rootFixedSize()}\n"\
-               f"[+] Table Schema 1 Identifier: {self.tableSchema1Identifier()}\n"\
-               f"[+] Table Schema 2 Identifier: {self.tableSchema2Identifier()}\n"\
-               f"[+] Table Rows Number: {self.tableRowsNumber()}\n"\
-               f"[+] Number of Extents: {self.numberOfTableExtents()}"
+        return 
 
     def _nonRootIndexType(self) -> str:
         return f"[+] Root Fixed Size: {self.rootFixedSize()}"
 
     def info(self) -> str:
-        indexRootElementInfo = self._rootIndexType() if self.indexType == 2 else self._nonRootIndexType()
         return f"<<=================[Index Root Element]==================>>\n"\
                f"[+] Size: {self.size()}\n"\
-               f"{indexRootElementInfo}"
+               f"[+] Root Fixed Size: {self.rootFixedSize()}\n"\
+               f"[+] Table Schema 1 Identifier: {self.tableSchema1Identifier()}\n"\
+               f"[+] Table Schema 2 Identifier: {self.tableSchema2Identifier()}\n"\
+               f"[+] Table Rows Number: {self.tableRowsNumber()}\n"\
+               f"[+] Number of Extents: {self.numberOfTableExtents()}"
+
+class IndexNonRootElement(IndexElement):
+    def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+        super().__init__(byteArray)
+    
+    def alignment(self) -> bytes:
+        return self.byteArray[0x4:0x8]
+    
+    def info(self):
+        return f"<<===============[Index Non-Root Element]================>>\n"\
+               f"[+] Size: {self.size()}"

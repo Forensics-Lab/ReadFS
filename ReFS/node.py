@@ -1,9 +1,10 @@
-from ReFS.page import *
+from typing import Union
+from ReFS.page import PageHeader
+from ReFS.dataArea import DataArea
 from bytesReader.reader import Reader
-from ReFS.dataArea import IndexEntries
+from ReFS.indexEntries import IndexEntries
 from ReFS.indexHeader import IndexHeader
-from ReFS.indexRootElement import IndexRootElement
-
+from ReFS.indexElementStruct import IndexRootElement, IndexNonRootElement
 
 class Node(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
@@ -12,23 +13,21 @@ class Node(Reader):
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
         self.indexHeaderOffset = self.indexRoot().size() + 0x50
 
-    def indexRoot(self) -> IndexRootElement:
+    def indexRoot(self) -> Union[IndexRootElement, IndexRootElement]:
         size = self.formater.toDecimal(self.byteArray[0x50:0x50+0x4])
         indexType = self.formater.toDecimal(self.byteArray[size+0x50+0xD:size+0x50+0xE])
-        return IndexRootElement(self.byteArray[0x50:0x50 + size], indexType=indexType)
+        return IndexRootElement(self.byteArray[0x50:0x50 + size]) if indexType == 0x2 else IndexNonRootElement(self.byteArray[0x50:0x50 + size])
 
     def indexHeader(self) -> IndexHeader:
-        return IndexHeader(self.byteArray[self.indexHeaderOffset:self.indexHeaderOffset + 0x28])
+        return IndexHeader(self.byteArray[self.indexHeaderOffset:self.indexHeaderOffset + self.indexRoot().rootFixedSize()])
 
-    def dataArea(self) -> IndexEntries:
-        # this function will need refactoring.
-        # the plan is to find a cleaner way to get the key:value pairs from the data area within the Container Table.
-        indexHeader = self.indexHeader()
-        keysStartOffset = indexHeader.keyIndexStart() + self.indexHeaderOffset
-        keysEndOffset = indexHeader.keyIndexEnd() + self.indexHeaderOffset
-        keysNumber = indexHeader.keyIndexEntries()
-        keysBlock = self.byteArray[keysStartOffset:keysEndOffset]
-        return IndexEntries(self.byteArray, keysBlock, keysNumber, self.indexHeaderOffset)
+    def dataArea(self) -> DataArea:
+        dataAreaStart = self.indexHeader().dataAreaOffsetStart() + self.indexHeaderOffset
+        dataAreaEnd = self.indexHeader().dataAreaOffsetEnd() + self.indexHeaderOffset
+        return DataArea(self.byteArray[dataAreaStart:dataAreaEnd])
+
+    def indexEntries(self) -> IndexEntries:
+        return IndexEntries(self.dataArea().byteArray, self.indexHeader().keyIndexEntries())
 
     def info(self) -> str:
         return f"{self.pageHeader.info()}\n"\

@@ -6,6 +6,7 @@ class Superblock(Reader):
         super().__init__(filePath)
         self.byteArray = super().getBytes(readByteRange, offset=offset)
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
+        self.pageDescriptor = PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
 
     def GUID(self) -> str:
         temp = [self.formater.reverseBytes(self.byteArray[0x50:0x60][i:i+4]) for i in range(0, len(self.byteArray[0x50:0x60]), 4)]
@@ -43,4 +44,4 @@ class Superblock(Reader):
                f"[+] Checkpoint2 Offset: {checkpoint2} bytes\n"\
                f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()} bytes\n"\
                f"[+] Self Descriptor Length: {self.selfDescriptorLength()} bytes\n"\
-               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"
+               f"{self.pageDescriptor.info()}"

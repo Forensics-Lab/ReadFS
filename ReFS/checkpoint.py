@@ -1,12 +1,13 @@
-from ReFS.page import *
 from ReFS.node import Node
 from bytesReader.reader import Reader
+from ReFS.page import PageHeader, PageDescriptor
 
 class Checkpoint(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
         super().__init__(filePath)
         self.byteArray = super().getBytes(readByteRange, offset=offset)
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
+        self.pageDescriptor = PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
         self.__pointerList = self.pointerList()
 
     def _getVirtualCluster(self, byteNumber:int) -> int:
@@ -14,7 +15,7 @@ class Checkpoint(Reader):
 
     def _realAddressClusters(self, virtualAddresses: list) -> list:
         containerTableOffset = virtualAddresses[7] * len(self.byteArray)
-        containerTable = Node(self.file, [0x0, len(self.byteArray)], containerTableOffset).dataArea()
+        containerTable = Node(self.file, [0x0, len(self.byteArray)], containerTableOffset).indexEntries()
         entries = containerTable.getEntries()
         plist = []
         for index, address in enumerate(virtualAddresses):
@@ -110,7 +111,6 @@ class Checkpoint(Reader):
                f"[+] Checkpoint Virtual Clock: {self.chkpVirtualClock()}\n"\
                f"[+] Allocator Virtual Clock: {self.allocatorVirtualClock()}\n"\
                f"[+] Oldest Log Record: {self.oldestLogRecordReference()}\n"\
-               f"[+] Reserved: {self.reserved()}\n"\
                f"<<=============[Pointers Bytes Offset Info]==============>>\n"\
                f"[+] Count: {self.pointerCount()}\n"\
                f"[+] Object ID Table: {self.objectIDPointer()}\n"\
@@ -126,4 +126,4 @@ class Checkpoint(Reader):
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
                f"[+] Small Allocator Table: {self.smallAllocatorTablePointer() * len(self.byteArray)}\n"\
-               f"{PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"
+               f"{self.pageDescriptor.info()}"

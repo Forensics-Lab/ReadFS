@@ -20,7 +20,7 @@ class IndexHeader:
         return self.formater.toDecimal(self.byteArray[0xC:0xD])
 
     def flag(self) -> str:
-        flagsStruct = {0x1:"Iner", 0x2:"Root", 0x4:"Stream"}
+        flagsStruct = {0x1:"Iner", 0x2:"Root", 0x3:"Iner-Root", 0x4:"Stream"}
         flagValue = self.formater.toDecimal(self.byteArray[0xD:0xE])
         return flagsStruct[flagValue]
 
