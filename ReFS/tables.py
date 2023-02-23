@@ -6,24 +6,24 @@ class Container:
         self.byteArray = byteArray
         self.formater = Formater()
     
-    def containerNumber(self):
+    def containerNumber(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])
 
-    def flag(self):
+    def flag(self) -> str:
         flagStruct = {0x1: "Inner", 0x2: "Root", 0x4: "Stream"}
         flagValue = self.formater.toDecimal(self.byteArray[0x10:0x11])
         return flagStruct[flagValue]
 
-    def emptyClusters(self):
+    def emptyClusters(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x20:0x28])
     
-    def containerLCN(self):
+    def containerLCN(self) -> int:
         return self.formater.toDecimal(self.byteArray[0xD0:0xD8])
     
-    def clustersPerContainer(self):
+    def clustersPerContainer(self) -> int:
         return self.formater.toDecimal(self.byteArray[0xD8:0xE0])
 
-    def structure(self):
+    def structure(self) -> dict:
         return {"Container":self.containerNumber(),
                 "Node Type":self.flag(),
                 "Empty Clusters":self.clustersPerContainer() - self.emptyClusters(),

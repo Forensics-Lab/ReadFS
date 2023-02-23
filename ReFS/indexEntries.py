@@ -33,7 +33,7 @@ class IndexEntries:
     def valueSize(self, _bytes: bytes) -> int:
         return self.formater.toDecimal(_bytes[0xC:0xE])
 
-    def __getKeyValueData(self, _bytes):
+    def __getKeyValueData(self, _bytes) -> dict:
         entryGeneralHeader = {"Entry size": self.entrySize(_bytes),
                               "Key Offset Start":self.keyStartOffset(_bytes),
                               "Key Size":self.keySize(_bytes),
@@ -50,7 +50,7 @@ class IndexEntries:
         return tables[tableIdentifier]
 
 
-    def getEntries(self):
+    def getEntries(self) -> list:
         ent = []
         relativeOffset = 0
         for i in range(self.keysCont):

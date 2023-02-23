@@ -54,6 +54,6 @@ class IndexNonRootElement(IndexElement):
     def alignment(self) -> bytes:
         return self.byteArray[0x4:0x8]
     
-    def info(self):
+    def info(self) -> str:
         return f"<<===============[Index Non-Root Element]================>>\n"\
                f"[+] Size: {self.size()}"

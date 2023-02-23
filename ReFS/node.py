@@ -2,8 +2,8 @@ from typing import Union
 from ReFS.page import PageHeader
 from ReFS.dataArea import DataArea
 from bytesReader.reader import Reader
-from ReFS.indexEntries import IndexEntries
 from ReFS.indexHeader import IndexHeader
+from ReFS.indexEntries import IndexEntries
 from ReFS.indexElementStruct import IndexRootElement, IndexNonRootElement
 
 class Node(Reader):
