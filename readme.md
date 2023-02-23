@@ -96,9 +96,7 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 [+] Checkpoint Virtual Clock: 17
 [+] Allocator Virtual Clock: 13
 [+] Oldest Log Record: 2
-[+] Reserved: 0
 <<=============[Pointers Bytes Offset Info]==============>>
-[+] Count: 13
 [+] Object ID Table: 34209792
 [+] Duplicate Object ID Table: 34275328
 [+] Medium Allocator Table: 36896768
