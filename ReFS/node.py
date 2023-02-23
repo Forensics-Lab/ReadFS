@@ -27,7 +27,7 @@ class Node(Reader):
         return DataArea(self.byteArray[dataAreaStart:dataAreaEnd])
 
     def indexEntries(self) -> IndexEntries:
-        return IndexEntries(self.dataArea().byteArray, self.indexHeader().keyIndexEntries())
+        return IndexEntries(self.dataArea().byteArray, self.indexHeader().keyIndexEntries(), self.pageHeader.tableIdentifier())
 
     def info(self) -> str:
         return f"{self.pageHeader.info()}\n"\

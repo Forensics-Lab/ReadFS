@@ -10,22 +10,21 @@ class Checkpoint(Reader):
         self.pageDescriptor = PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
         self.__pointerList = self.pointerList()
 
-    def _getVirtualCluster(self, byteNumber:int) -> int:
+    def __getVirtualClusterAddress(self, byteNumber:int) -> int:
         return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])
 
-    def _realAddressClusters(self, virtualAddresses: list) -> list:
-        containerTableOffset = virtualAddresses[7] * len(self.byteArray)
-        containerTable = Node(self.file, [0x0, len(self.byteArray)], containerTableOffset).indexEntries()
-        entries = containerTable.getEntries()
+    def __phisycalClustersAddress(self, virtualAddresses: list) -> list:
         plist = []
+        containerTableOffset = virtualAddresses[7] * len(self.byteArray)
+        containerTableNodeEntries = Node(self.file, [0x0, len(self.byteArray)], containerTableOffset).indexEntries().getEntries()
         for index, address in enumerate(virtualAddresses):
             if index not in (7, 8, 12): # Skipping Container Table, Container Table Duplicate and Small Allocator Table
-                containerComponent = int(hex(address)[2]) - 1
+                containerOffset = int(hex(address)[2]) - 1
                 offsetComponent = int(hex(address)[3:], 16)
-                address = hex(entries[containerComponent]["x"]["Container LCN"])[:-2]
+                address = hex(containerTableNodeEntries[containerOffset]["Table Specific Info"]["Container LCN"])[:-2]
                 address = (int(address, 16) + offsetComponent) * len(self.byteArray)
             plist.append(address)
-        return plist
+        return tuple(plist)
 
     def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])
@@ -59,9 +58,7 @@ class Checkpoint(Reader):
 
     def pointerList(self) -> list:
         plist = self.byteArray[0x94:0xC8]
-        plist = [self._getVirtualCluster(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)]
-        plist = self._realAddressClusters(plist)
-        return plist
+        return self.__phisycalClustersAddress([self.__getVirtualClusterAddress(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)])
 
     def objectIDPointer(self) -> int:
         return self.__pointerList[0]
@@ -112,7 +109,6 @@ class Checkpoint(Reader):
                f"[+] Allocator Virtual Clock: {self.allocatorVirtualClock()}\n"\
                f"[+] Oldest Log Record: {self.oldestLogRecordReference()}\n"\
                f"<<=============[Pointers Bytes Offset Info]==============>>\n"\
-               f"[+] Count: {self.pointerCount()}\n"\
                f"[+] Object ID Table: {self.objectIDPointer()}\n"\
                f"[+] Duplicate Object ID Table: {self.objectIDDuplicatePointer()}\n"\
                f"[+] Medium Allocator Table: {self.mediumAllocatorPointer()}\n"\
