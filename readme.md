@@ -19,6 +19,7 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
 
 # Usage
 
+## Bootsector
 To display general information about the forensic image you will need to pass the -ii or --image_info flags. See the example bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -ii
@@ -40,9 +41,8 @@ $> py main.py -f path/to/file.001 -ii
 [+] Volume Serial Number: 7EBA2960BA2915E5
 <<=======================================================>>
 ```
-
-At this stage in development the tool is able to parse the data found in the Superblock, Checkpoint and individual Table Nodes but I didn't implement a flag that allows you to view data by passing a offset to a node yet. 
-As I said, in the mean time, please use the bellow command to get the information stored in the Superblock:
+## Superblock
+The information stored in the Superblock structure can be extracted using the command bellow:
 
 ```cmd
 $> py main.py -f path/to/file.001 -bi superblock
@@ -76,7 +76,8 @@ $> py main.py -f path/to/file.001 -bi superblock
 [+] Page Data Checksum: DDA05B730320F31C
 <<=======================================================>>
 ```
-You can do the exact same thing with the Checkpoint:
+## Checkpoint
+The information stored in the Checkpoint can be extracted using the command bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -bi checkpoint
 ```
@@ -122,6 +123,60 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 [+] Page Data Checksum: 4FE421E97BEC00C5
 <<=======================================================>>
 ```
+## Node
+As of now the only tables that the Node class can parse are the Container Table, Object ID and their duplicates, in the near future this will change!
+
+General Node information can be displayed by passing the offset to a table found in the checkpoint. Let's take the Object ID Table pointer offset for example:
+```cmd
+$> py main.py -f path/to/file.001 --node 34209792 --info
+```
+```
+<<=====================[Page Header]=====================>>
+[+] Page Signature: MSB+
+[+] Volume Signature: 5C1FB1E2
+[+] LCN_0: 1028
+[+] LCN_1: 0
+[+] LCN_2: 0
+[+] LCN_3: 0
+[+] Table Type: Container
+<<=================[Index Root Element]==================>>
+[+] Size: 552
+[+] Root Fixed Size: 40
+[+] Table Schema 1 Identifier: E0C0
+[+] Table Schema 2 Identifier: E0C0
+[+] Table Rows Number: 79
+[+] Number of Extents: 0
+<<====================[Index Header]=====================>>
+[+] Node Type: Root
+[+] Node Height: 0
+[+] Start Of Data Area: 40
+[+] End Of Data Area: 19000
+[+] Key Index Start: 64588
+[+] Key Index End: 64904
+[+] Key Index Entries: 79
+[+] Node Free Bytes: 45588
+<<=======================================================>>
+```
+Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag:
+```cmd
+$> py main.py -f path/to/file.001 --node 34209792 --entries
+```
+```
+[...snip...]
+{'Entry size': 240, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 16, 'Value Size': 224, 'Container': {'Container': 3, 'Node Type': 'Inner', 'Empty Clusters': 1023, 'Container LCN': 9216, 'Clusters Per Container': 1024}}
+{'Entry size': 240, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 16, 'Value Size': 224, 'Container': {'Container': 4, 'Node Type': 'Inner', 'Empty Clusters': 1020, 'Container LCN': 79872, 'Clusters Per Container': 1024}}
+{'Entry size': 240, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 16, 'Value Size': 224, 'Container': {'Container': 5, 'Node Type': 'Inner', 'Empty Clusters': 0, 'Container LCN': 1024, 'Clusters Per Container': 1024}}
+[...snip...]
+```
+There is a flag that permits single entry output because there may occasionally be too many entries to view in the console.
+```cmd
+$> py main.py -f path/to/file.001 --node 34209792 --entry 1
+```
+```
+{'Entry size': 240, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 16, 'Value Size': 224, 'Container': {'Container': 4, 'Node Type': 'Inner', 'Empty Clusters': 1020, 'Container LCN': 79872, 'Clusters Per Container': 1024}}
+```
+### Note
+The tables that populate the nodes have different structures so the output will be different for enery table, excluding the duplicates as they have the same structure as their parents.
 
 # What's next?
 - Adding support for the rest of the tables in the file system.

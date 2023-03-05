@@ -53,7 +53,7 @@ class Checkpoint(Reader):
 
     def pointerList(self) -> list:
         plist = self.byteArray[0x94:0xC8]
-        return self.__phisycalClustersAddress([self.__getVirtualClusterAddress(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)])
+        return self.__phisycalClustersAddress((self.__getVirtualClusterAddress(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)))
 
     def objectIDPointer(self) -> int:
         return self.__pointerList[0]
