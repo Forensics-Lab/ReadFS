@@ -53,9 +53,9 @@ class IndexEntries:
     def getEntries(self) -> list:
         ent = []
         relativeOffset = 0
-        for _ in range(self.keysCont - 1):
+        for _ in range(self.keysCont):
             keySize = self.formater.toDecimal(self.byteArray[relativeOffset:relativeOffset+0x4])
-            relativeOffset += keySize
             key = self.byteArray[relativeOffset:relativeOffset + keySize]
             ent.append(self.__getKeyValueData(key))
+            relativeOffset += keySize
         return tuple(ent)

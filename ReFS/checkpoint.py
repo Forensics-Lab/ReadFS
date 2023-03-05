@@ -1,5 +1,4 @@
 from ReFS.node import Node
-from itertools import islice
 from bytesReader.reader import Reader
 from ReFS.page import PageHeader, PageDescriptor
 
