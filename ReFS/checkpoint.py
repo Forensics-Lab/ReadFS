@@ -15,16 +15,11 @@ class Checkpoint(Reader):
 
     def __phisycalClustersAddress(self, virtualAddresses: list) -> list:
         plist = []
-        containerTableOffset = virtualAddresses[7] * len(self.byteArray)
-        containerTableNodeEntries = Node(self.file, [0x0, len(self.byteArray)], containerTableOffset).indexEntries().getEntries()
         for index, address in enumerate(virtualAddresses):
             if index not in (7, 8, 12): # Skipping Container Table, Container Table Duplicate and Small Allocator Table
-                containerOffset = int(hex(address)[2]) - 1
-                offsetComponent = int(hex(address)[3:], 16)
-                address = hex(containerTableNodeEntries[containerOffset]["Table Specific Info"]["Container"]["Container LCN"])[:-2]
-                address = (int(address, 16) + offsetComponent) * len(self.byteArray)
-            plist.append(address)
-        return tuple(plist)
+                address = int(hex(address)[3:], 16)
+            plist.append(address * len(self.byteArray))
+        return plist
 
     def majorVersion(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x54:0x56])

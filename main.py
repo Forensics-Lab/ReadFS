@@ -21,7 +21,7 @@ def main():
     if args.image_info:
         print(bootSector.info())
     if args.block_info:
-        if args.block_info == "superblock":        
+        if args.block_info == "superblock":
             print(superblock.info())
         elif args.block_info == "checkpoint":
             print(checkpoint.info())

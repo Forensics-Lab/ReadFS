@@ -4,9 +4,9 @@ from bytesReader.bytesFormater import Formater
 
 class IndexEntries:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysCount:int, tableIdentifier) -> None:
-        self.byteArray = byteArray
         self.formater = Formater()
         self.keysCont = keysCount
+        self.byteArray = byteArray
         self.tableIdentifier = tableIdentifier
 
     def entrySize(self, _bytes: bytes) -> int:
@@ -39,16 +39,14 @@ class IndexEntries:
                               "Flag":self.flag(_bytes),
                               "Value Start Offset": self.vlaueStartOffset(_bytes),
                               "Value Size": self.valueSize(_bytes),
-                              "Table Specific Info": self.__tableSpecifficStruct(_bytes, self.tableIdentifier)}
+                              self.tableIdentifier: self.__tableSpecifficStruct(_bytes)}
         return entryGeneralHeader
 
-    def __tableSpecifficStruct(self, _bytes: bytes, tableIdentifier: str) -> dict:
-        #   In the future this dictionary will be populated with the 
-        # classes for each table (13 in total)
-        if tableIdentifier == "Container":
-            return {"Container": Container(_bytes[16:]).structure()}
-        elif tableIdentifier == "Object ID":
-            return {"Object ID": ObjectID(_bytes[16:]).structure()}
+    def __tableSpecifficStruct(self, _bytes: bytes) -> Union[Container, ObjectID]:
+        if self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Duplicate)":
+            return Container(_bytes[16:]).structure()
+        elif self.tableIdentifier == "Object ID" or self.tableIdentifier == "Object ID (Duplicate)":
+            return ObjectID(_bytes[16:]).structure()
 
     def getEntries(self) -> list:
         ent = []
@@ -58,4 +56,4 @@ class IndexEntries:
             relativeOffset += keySize
             key = self.byteArray[relativeOffset:relativeOffset + keySize]
             ent.append(self.__getKeyValueData(key))
-        return ent
+        return tuple(ent)
