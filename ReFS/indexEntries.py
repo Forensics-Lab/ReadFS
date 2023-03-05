@@ -22,8 +22,7 @@ class IndexEntries:
         flagsStruct = {0x0:"Not Set",
                        0x2:"Rightmost extent in a subtree",
                        0x4:"Deleted Entry",
-                       0x6:"Rightmost extent in a subtree & Deleted Entry",
-                       0x40:"Stream Index Entry"}
+                       0x6:"Rightmost extent in a subtree & Deleted Entry"}
         flagValue = self.formater.toDecimal(_bytes[0x8:0xA])
         return flagsStruct[flagValue]
 
@@ -46,16 +45,17 @@ class IndexEntries:
     def __tableSpecifficStruct(self, _bytes: bytes, tableIdentifier: str) -> dict:
         #   In the future this dictionary will be populated with the 
         # classes for each table (13 in total)
-        tables = {"Container":Container(_bytes[16:]).structure()}
-        return tables[tableIdentifier]
-
+        if tableIdentifier == "Container":
+            return {"Container": Container(_bytes[16:]).structure()}
+        elif tableIdentifier == "Object ID":
+            return {"Object ID": ObjectID(_bytes[16:]).structure()}
 
     def getEntries(self) -> list:
         ent = []
         relativeOffset = 0
-        for i in range(self.keysCont):
-            keySize = self.formater.toDecimal(self.byteArray[i*relativeOffset:i*relativeOffset+0x4])
-            key = self.byteArray[i*relativeOffset:i*relativeOffset + keySize]
+        for _ in range(self.keysCont - 1):
+            keySize = self.formater.toDecimal(self.byteArray[relativeOffset:relativeOffset+0x4])
+            relativeOffset += keySize
+            key = self.byteArray[relativeOffset:relativeOffset + keySize]
             ent.append(self.__getKeyValueData(key))
-            relativeOffset = keySize
         return ent

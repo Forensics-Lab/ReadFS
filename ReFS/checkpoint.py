@@ -21,7 +21,7 @@ class Checkpoint(Reader):
             if index not in (7, 8, 12): # Skipping Container Table, Container Table Duplicate and Small Allocator Table
                 containerOffset = int(hex(address)[2]) - 1
                 offsetComponent = int(hex(address)[3:], 16)
-                address = hex(containerTableNodeEntries[containerOffset]["Table Specific Info"]["Container LCN"])[:-2]
+                address = hex(containerTableNodeEntries[containerOffset]["Table Specific Info"]["Container"]["Container LCN"])[:-2]
                 address = (int(address, 16) + offsetComponent) * len(self.byteArray)
             plist.append(address)
         return tuple(plist)

@@ -5,6 +5,7 @@ class Superblock(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
         super().__init__(filePath)
         self.byteArray = super().getBytes(readByteRange, offset=offset)
+        self.clusterSize = len(self.byteArray)
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
         self.pageDescriptor = PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
 
@@ -18,10 +19,9 @@ class Superblock(Reader):
         return self.formater.toDecimal(self.byteArray[0x68:0x70])
 
     def checkpointOffset(self) -> tuple[int, int]:
-        clusterSize = len(self.byteArray)
         checkpointRelativeOffset = self.formater.toDecimal(self.byteArray[0x70:0x74])
-        chk1 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset:checkpointRelativeOffset+0x08]) * clusterSize
-        chk2 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset+0x08:checkpointRelativeOffset+0x10]) * clusterSize
+        chk1 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset:checkpointRelativeOffset+0x08]) * self.clusterSize
+        chk2 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset+0x08:checkpointRelativeOffset+0x10]) * self.clusterSize
         return  chk1, chk2
 
     def checkpointReferenceNumber(self) -> int:

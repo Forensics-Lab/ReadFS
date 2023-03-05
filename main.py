@@ -1,4 +1,5 @@
 import argparse
+from ReFS.node import Node
 from ReFS.bootsector import BootSector
 from ReFS.superblock import Superblock
 from ReFS.checkpoint import Checkpoint
@@ -8,7 +9,6 @@ parser.add_argument("-f", "--file", help = "Path to file.", metavar='', required
 parser.add_argument("-ii", "--image_info", help = "Displays information about the partition found in the Boot Sector.", action="store_true")
 parser.add_argument("-bi", "--block_info", help = "Retries separate bytes.", metavar='', choices=["superblock", "checkpoint"])
 args = parser.parse_args()
-
 
 def main():
     bootSector = BootSector(args.file, [0x0, 0x48])
