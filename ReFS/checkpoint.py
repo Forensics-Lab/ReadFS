@@ -112,9 +112,9 @@ class Checkpoint(Reader):
                f"[+] Duplicate Schema Table: {self.schemaTableDuplicatePointer()}\n"\
                f"[+] Parent Child Table: {self.parentChildTablePointer()}\n"\
                f"[+] Block Reference Count Table: {self.blockReferenceCountPointer()}\n"\
-               f"[+] Container Table: {self.containerTablePointer() * len(self.byteArray)}\n"\
-               f"[+] Duplicate Container Table: {self.containerTableDuplicatePointer() * len(self.byteArray)}\n"\
+               f"[+] Container Table: {self.containerTablePointer()}\n"\
+               f"[+] Duplicate Container Table: {self.containerTableDuplicatePointer()}\n"\
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
-               f"[+] Small Allocator Table: {self.smallAllocatorTablePointer() * len(self.byteArray)}\n"\
+               f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()}\n"\
                f"{self.pageDescriptor.info()}"
