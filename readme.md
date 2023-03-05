@@ -16,9 +16,6 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
     - Checkpoint
     - Nodes
 
-# Updates
-- Container Allocator, Block Reference Count, Integrity State tables don't show the right offsets, I'll have to look into it. The rest of the tables found in the checkpoint have the right offset.
-
 # Usage
 
 ## Bootsector

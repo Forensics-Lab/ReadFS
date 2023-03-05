@@ -1,4 +1,5 @@
 from ReFS.node import Node
+from itertools import islice
 from bytesReader.reader import Reader
 from ReFS.page import PageHeader, PageDescriptor
 
@@ -15,9 +16,14 @@ class Checkpoint(Reader):
 
     def __phisycalClustersAddress(self, virtualAddresses: list) -> list:
         plist = []
+        containerTableNodeEntries = Node(self.file, [0x0, len(self.byteArray)], virtualAddresses[7] * len(self.byteArray)).indexEntries().getEntries()
         for index, address in enumerate(virtualAddresses):
             if index not in (7, 8, 12): # Skipping Container Table, Container Table Duplicate and Small Allocator Table
-                address = int(hex(address)[3:], 16)
+                offset = int(hex(address)[3:], 16)
+                if index in (2, 6, 11): # Container Allocator, Block Reference Count, Integrity State tables
+                    containerOffset = int(hex(address)[2]) - 1
+                    offset = (int(hex(containerTableNodeEntries[containerOffset]["Container"]["Container LCN"])[:-2], 16) + offset)
+                address = offset
             plist.append(address * len(self.byteArray))
         return plist
 
@@ -53,7 +59,7 @@ class Checkpoint(Reader):
 
     def pointerList(self) -> list:
         plist = self.byteArray[0x94:0xC8]
-        return self.__phisycalClustersAddress((self.__getVirtualClusterAddress(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)))
+        return self.__phisycalClustersAddress([self.__getVirtualClusterAddress(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)])
 
     def objectIDPointer(self) -> int:
         return self.__pointerList[0]
