@@ -10,12 +10,14 @@ This project wouldn't be possible or would be really hard to accomplish without 
 Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> https://doi.org/10.25593/issn.2191-5008/CS-2019-05
 
 # Current capabilities
-
 - The ability to correctly parse and output information from the following:
     - Boot sector
     - Superblock
     - Checkpoint
     - Nodes
+
+# Updates
+- Container Allocator, Block Reference Count, Integrity State tables don't show the right offsets, I'll have to look into it. The rest of the tables found in the checkpoint have the right offset.
 
 # Usage
 

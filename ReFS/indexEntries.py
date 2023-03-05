@@ -43,10 +43,12 @@ class IndexEntries:
         return entryGeneralHeader
 
     def __tableSpecifficStruct(self, _bytes: bytes) -> Union[Container, ObjectID]:
-        if self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Duplicate)":
-            return Container(_bytes[16:]).structure()
-        elif self.tableIdentifier == "Object ID" or self.tableIdentifier == "Object ID (Duplicate)":
+        if self.tableIdentifier == "Object ID" or self.tableIdentifier == "Object ID (Duplicate)":
             return ObjectID(_bytes[16:]).structure()
+        elif self.tableIdentifier == "Schema" or self.tableIdentifier == "Schema (Duplicate)":
+            return Schema(_bytes[16:]).structure()
+        elif self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Duplicate)":
+            return Container(_bytes[16:]).structure()
 
     def getEntries(self) -> list:
         ent = []

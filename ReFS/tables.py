@@ -85,3 +85,41 @@ class ObjectID:
                 "Durable LSN": self.durableLSN(),
                 "Page Reference":self.pageReference(),
                 "Buffer Data": self.bufferData()}
+
+class Schema:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+        self.byteArray = byteArray
+        self.formater = Formater()
+
+    def id(self):
+        return hex(self.formater.toDecimal(self.byteArray[0x0:0x4]))[2:].upper()
+    
+    def schemaSize(self):
+        return self.formater.toDecimal(self.byteArray[0x8:0xC][0x0:0x4])
+
+    def schemaOffset(self):
+        return self.formater.toDecimal(self.byteArray[0xC:0x10])
+
+    def schemaLength(self):
+        return self.formater.toDecimal(self.byteArray[0x20:0x24])
+    
+    def collation(self):
+        return self.formater.toDecimal(self.byteArray[0x24:0x28])
+    
+    def rootNodeSize(self):
+        return self.formater.toDecimal(self.byteArray[0x38:0x3C])
+    
+    def indexRootSize(self):
+        return self.formater.toDecimal(self.byteArray[0x3C:0x40])
+
+    def pageSize(self):
+        return self.formater.toDecimal(self.byteArray[0x44:0x48])
+
+    def structure(self):
+        return {"Schema ID": self.id(),
+                "Schema Complete size ": self.schemaSize(),
+                "Schema Offset": self.schemaOffset(),
+                "Schema Length": self.schemaLength(),
+                "Collation": self.collation(),
+                "Root Node Size": self.rootNodeSize(),
+                "Page Size": self.pageSize()}
