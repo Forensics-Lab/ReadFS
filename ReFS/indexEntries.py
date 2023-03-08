@@ -1,5 +1,6 @@
 from typing import Union
 from ReFS.tables import *
+from prettytable import PrettyTable
 from bytesReader.bytesFormater import Formater
 
 class IndexEntries:
@@ -34,20 +35,20 @@ class IndexEntries:
 
     def __getKeyValueData(self, _bytes) -> dict:
         entryGeneralHeader = {"Entry size": self.entrySize(_bytes),
-                              "Key Offset Start":self.keyStartOffset(_bytes),
+                              "Key Offset":self.keyStartOffset(_bytes),
                               "Key Size":self.keySize(_bytes),
                               "Flag":self.flag(_bytes),
-                              "Value Start Offset": self.vlaueStartOffset(_bytes),
+                              "Value Offset": self.vlaueStartOffset(_bytes),
                               "Value Size": self.valueSize(_bytes),
                               self.tableIdentifier: self.__tableSpecifficStruct(_bytes)}
         return entryGeneralHeader
 
     def __tableSpecifficStruct(self, _bytes: bytes) -> Union[Container, ObjectID]:
-        if self.tableIdentifier == "Object ID" or self.tableIdentifier == "Object ID (Duplicate)":
+        if self.tableIdentifier == "Object ID" or self.tableIdentifier == "Object ID (Dup.)":
             return ObjectID(_bytes[16:]).structure()
-        elif self.tableIdentifier == "Schema" or self.tableIdentifier == "Schema (Duplicate)":
+        elif self.tableIdentifier == "Schema" or self.tableIdentifier == "Schema (Dup.)":
             return Schema(_bytes[16:]).structure()
-        elif self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Duplicate)":
+        elif self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Dup.)":
             return Container(_bytes[16:]).structure()
 
     def getEntries(self) -> list:
@@ -59,3 +60,18 @@ class IndexEntries:
             ent.append(self.__getKeyValueData(key))
             relativeOffset += keySize
         return tuple(ent)
+    
+    def logEntry(self, entry=None):
+        # This function will need to be redone but for now it gets the job done.
+        print(entry)
+        entries = self.getEntries()
+        table = PrettyTable()
+        keys = list(entries[0].keys())
+        values = list(entries[0].values())
+        table.field_names = keys[:-1] + ["Table Type"] + list(values[-1].keys())
+        if not entry:
+            for i in entries:
+                table.add_row(list(i.values())[:-1] + [tuple(i.keys())[-1]] + list(tuple(i.values())[-1].values()))
+        elif entry:
+            table.add_row(list(entries[entry].values())[:-1] + [tuple(entries[entry].keys())[-1]] + list(tuple(entries[entry].values())[-1].values()))
+        return table

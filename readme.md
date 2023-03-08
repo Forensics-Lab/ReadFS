@@ -2,7 +2,7 @@
 
 This project started after I learned that Microsoft has developed a new file system that removes some limitations that NTFS has and deals better with data corruption. After looking around to see if there are any tools or pieces of software that can parse this type of file system I could only find 5 products which have support for ReFS but I think those tools can be improved. 
 
-With that said, this project aims to fit the needs of a day-to-day user and help out with data loss recovery and forensics investigations. The plan is to build a console-based utility for windows or linux that will help forensic investigators parse ReFS foremated disks images created by FTK Imager.
+With that said, this project aims to fit the needs of a day-to-day user and help out with data loss recovery and forensics investigations. The plan is to build a console-based utility for windows or linux that will help forensic investigators parse ReFS formated disks images created by FTK Imager.
 
 # Giving credit where credit is due
 
@@ -19,6 +19,7 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
 # Usage
 
 ## Bootsector
+---
 To display general information about the forensic image you will need to pass the -ii or --image_info flags. See the example bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -ii
@@ -41,6 +42,7 @@ $> py main.py -f path/to/file.001 -ii
 <<=======================================================>>
 ```
 ## Superblock
+---
 The information stored in the Superblock structure can be extracted using the command bellow:
 
 ```cmd
@@ -76,6 +78,7 @@ $> py main.py -f path/to/file.001 -bi superblock
 <<=======================================================>>
 ```
 ## Checkpoint
+---
 The information stored in the Checkpoint can be extracted using the command bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -bi checkpoint
@@ -123,6 +126,7 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 <<=======================================================>>
 ```
 ## Node
+---
 As of now the only tables that the Node class can parse are the Container Table, Object ID and their duplicates, in the near future this will change!
 
 General Node information can be displayed by passing the offset to a table found in the checkpoint. Let's take the Object ID Table pointer offset for example:
@@ -156,26 +160,53 @@ $> py main.py -f path/to/file.001 --node 33751040 --info
 [+] Node Free Bytes: 59832
 <<=======================================================>>
 ```
-Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag:
+Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag and specify the output format (--table or --raw):
 ```cmd
-$> py main.py -f path/to/file.001 --node 33751040 --entries
+$> py main.py -f path/to/file.001 --node 33751040 --entries --table
 ```
 ```
-[...snip...]
-{'Entry size': 272, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Upcase Table', 'Durable LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (0, 0), 'Page Reference': (4144, 0, 0, 0), 'Buffer Data': b''}}
-{'Entry size': 272, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Logfile Information Table, dup.', 'Durable LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (0, 0), 'Page Reference': (4153, 0, 0, 0), 'Buffer Data': b''}}
-{'Entry size': 272, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Logfile Information Table', 'Durable LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (0, 0), 'Page Reference': (4154, 0, 0, 0), 'Buffer Data': b''}}
++------------+------------+----------+---------+--------------+------------+------------+--------------------------+------------+---------------+---------------+-------------+-----------------+
+| Entry size | Key Offset | Key Size |   Flag  | Value Offset | Value Size | Table Type |            ID            | LSN Offset | Buffer Offset | Buffer Length | Durable LSN |  Page Reference |
++------------+------------+----------+---------+--------------+------------+------------+--------------------------+------------+---------------+---------------+-------------+-----------------+
+|    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |       Upcase dup.        |     24     |      200      |       0       |    (0, 0)   | (4143, 0, 0, 0) |
+|    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |          Upcase          |     24     |      200      |       0       |    (0, 0)   | (4144, 0, 0, 0) |
+|    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  | Logfile Information dup. |     24     |      200      |       0       |    (0, 0)   | (4153, 0, 0, 0) |
+|    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |   Logfile Information    |     24     |      200      |       0       |    (0, 0)   | (4154, 0, 0, 0) |
+|    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |       Trash Stream       |     24     |      200      |       0       |    (1, 0)   | (4157, 0, 0, 0) |
 [...snip...]
 ```
 There is a flag that permits single entry output because there may occasionally be too many entries to view in the console.
 ```cmd
-$> py main.py -f path/to/file.001 --node 33751040 --entry 1
+$> py main.py -f path/to/file.001 --node 33751040 --entry 4 --raw
 ```
 ```
-{'Entry size': 272, 'Key Offset Start': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Start Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Logfile Information Table, dup.', 'Durable LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (0, 0), 'Page Reference': (4153, 0, 0, 0), 'Buffer Data': b''}}
+{'Entry size': 272, 'Key Offset': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Trash Stream', 'LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (1, 0), 'Page Reference': (4157, 0, 0, 0)}}
 ```
 ### Note
-The tables that populate the nodes have different structures so the output will be different for enery table, excluding the duplicates as they have the same structure as their parents.
+---
+- For now the only tables supported by the --table flag are:
+    * `Object ID Table`
+    * `Object ID Table (dup.)`
+    * `Schema Table`
+    * `Schema Table (dup.)`
+    * `Container Table`
+    * `Container Table (dup.)`
+- The --raw flag works for the following tables:
+    * `Object ID Table`
+    * `Object ID Table (dup.)`
+    * `Schema Table`
+    * `Schema Table (dup.)`
+    * `Container Table`
+    * `Container Table (dup.)`
+    * `Parent Child Table` (For now it carves out general data about each entry in the table, support needs to be added)
+- Support will be added for the following tables/nodes:
+    * `All Allocator Tables (Small, Medium, Container)`
+    * `Parent Child Table`
+    * `Block Reference Count`
+    * `Container Index Table`
+    * `Integrity State Table`
+- I'd suggest to set the console width to 200 to be able to see the tables fully
+- The tables that populate the nodes have different structures so the output will be different for enery table, excluding the duplicates as they have the same structure as their parents.
 
 # What's next?
 - Adding support for the rest of the tables in the file system.

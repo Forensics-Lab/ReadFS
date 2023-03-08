@@ -39,19 +39,19 @@ class ObjectID:
     def id(self):
         try:
             tableID = self.formater.toDecimal(self.byteArray[0x8:0x10])
-            tableIDNames = {0x7: "Upcase Table",
-                    0x8: "Upcase Table, dup.",
-                    0x9: "Logfile Information Table",
-                    0xA: "Logfile Information Table, dup.",
-                    0xD: "Trash Stream Table",
-                    0x500: "Volume Information Table",
-                    0x501: "Volume Information Table, dup.",
-                    0x520: "File System Metadata Table",
-                    0x530: "Security (Descriptor) Table",
-                    0x540: "Reparse Index Table",
-                    0x541: "Reparse Index Table, dup.",
-                    0x520: "File System Metadata Table",
-                    0x600: "Root Directory Table"}
+            tableIDNames = {0x7: "Upcase",
+                    0x8: "Upcase dup.",
+                    0x9: "Logfile Information",
+                    0xA: "Logfile Information dup.",
+                    0xD: "Trash Stream",
+                    0x500: "Volume Information",
+                    0x501: "Volume Information dup.",
+                    0x520: "File System Metadata",
+                    0x530: "Security",
+                    0x540: "Reparse Index",
+                    0x541: "Reparse Index dup.",
+                    0x520: "File System Metadata",
+                    0x600: "Root Directory"}
             return tableIDNames[tableID]
         except KeyError:
             return "Other directory table"
@@ -79,12 +79,11 @@ class ObjectID:
 
     def structure(self):
         return {"ID": self.id(),
-                "Durable LSN Offset": self.durableLSNOffset(),
+                "LSN Offset": self.durableLSNOffset(),
                 "Buffer Offset": self.bufferOffset(),
                 "Buffer Length": self.bufferLength(),
                 "Durable LSN": self.durableLSN(),
-                "Page Reference":self.pageReference(),
-                "Buffer Data": self.bufferData()}
+                "Page Reference":self.pageReference()}
 
 class Schema:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
@@ -117,9 +116,9 @@ class Schema:
 
     def structure(self):
         return {"Schema ID": self.id(),
-                "Schema Complete size ": self.schemaSize(),
+                "Schema size ": self.schemaSize(),
                 "Schema Offset": self.schemaOffset(),
                 "Schema Length": self.schemaLength(),
                 "Collation": self.collation(),
-                "Root Node Size": self.rootNodeSize(),
+                "Node Size": self.rootNodeSize(),
                 "Page Size": self.pageSize()}

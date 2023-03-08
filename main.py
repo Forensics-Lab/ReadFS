@@ -17,8 +17,13 @@ nodeArgs.add_argument('--info', help='Prints out data about the node', action='s
 nodeArgs.add_argument('--entry', help='Prints out data of a single entry', metavar='', type=int)
 nodeArgs.add_argument('--entries', help='Prints out data about all entries from a Node', action='store_true')
 
+entriesArgs = parser.add_argument_group("Entries flags").add_mutually_exclusive_group()
+entriesArgs.add_argument('--raw', help='Prints out key:value information as a dictionary', action='store_true')
+entriesArgs.add_argument('--table', help='Prints out key information in a table format', action='store_true')
+
 infoArgs.required = True if not parser.parse_args().node else False
 nodeArgs.required = True if parser.parse_args().node else False
+entriesArgs.required = True if (parser.parse_args().entries or parser.parse_args().entry) else False
 
 args = parser.parse_args()
 
@@ -37,16 +42,25 @@ def main():
             print(superblock.info())
         elif args.block_info == "checkpoint":
             print(checkpoint.info())
-        
+
     if args.node:
         node = Node(args.file, [0x0, clusterSize], args.node)
+        indexEntry = node.indexEntries()
         if args.info:
             print(node.info())
+        # args.entries flags will be updated in the future. 
+        # Need to find a more efficient/elegant way to do it
         if args.entries:
-            for entry in node.indexEntries().getEntries():
-                print(entry)
+            if args.raw:
+                for entry in indexEntry.getEntries():
+                    print(entry)
+            elif args.table:
+                print(indexEntry.logEntry())
         if args.entry:
-            print(node.indexEntries().getEntries()[args.entry])
+            if args.raw:
+                print(indexEntry.getEntries()[args.entry])
+            elif args.table:
+                print(indexEntry.logEntry(args.entry))
 
 if __name__ == "__main__":
     main()
