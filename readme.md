@@ -19,7 +19,6 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
 # Usage
 
 ## Bootsector
----
 To display general information about the forensic image you will need to pass the -ii or --image_info flags. See the example bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -ii
@@ -42,7 +41,6 @@ $> py main.py -f path/to/file.001 -ii
 <<=======================================================>>
 ```
 ## Superblock
----
 The information stored in the Superblock structure can be extracted using the command bellow:
 
 ```cmd
@@ -78,7 +76,6 @@ $> py main.py -f path/to/file.001 -bi superblock
 <<=======================================================>>
 ```
 ## Checkpoint
----
 The information stored in the Checkpoint can be extracted using the command bellow:
 ```cmd
 $> py main.py -f path/to/file.001 -bi checkpoint
@@ -126,7 +123,6 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 <<=======================================================>>
 ```
 ## Node
----
 As of now the only tables that the Node class can parse are the Container Table, Object ID and their duplicates, in the near future this will change!
 
 General Node information can be displayed by passing the offset to a table found in the checkpoint. Let's take the Object ID Table pointer offset for example:
@@ -183,7 +179,6 @@ $> py main.py -f path/to/file.001 --node 33751040 --entry 4 --raw
 {'Entry size': 272, 'Key Offset': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Trash Stream', 'LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (1, 0), 'Page Reference': (4157, 0, 0, 0)}}
 ```
 ### Note
----
 - For now the only tables supported by the --table flag are:
     * `Object ID Table`
     * `Object ID Table (dup.)`
