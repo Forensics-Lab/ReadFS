@@ -63,7 +63,6 @@ class IndexEntries:
     
     def logEntry(self, entry=None):
         # This function will need to be redone but for now it gets the job done.
-        print(entry)
         entries = self.getEntries()
         table = PrettyTable()
         keys = list(entries[0].keys())
