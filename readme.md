@@ -168,7 +168,7 @@ $> py main.py -f path/to/file.001 --node 33751040 --entries --table
 |  2  |    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |          Upcase          |     24     |      200      |       0       |    (0, 0)   | (4144, 0, 0, 0) |
 |  3  |    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  | Logfile Information dup. |     24     |      200      |       0       |    (0, 0)   | (4153, 0, 0, 0) |
 |  4  |    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |   Logfile Information    |     24     |      200      |       0       |    (0, 0)   | (4154, 0, 0, 0) |
-|  5  |    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |       Trash Stream       |     24     |      200      |       0       |    (1, 0)   | (4157, 0, 0, 0) |      200      |       0       |    (1, 0)   | (4157, 0, 0, 0) |
+|  5  |    272     |     16     |    16    | Not Set |      32      |    240     | Object ID  |       Trash Stream       |     24     |      200      |       0       |    (1, 0)   | (4157, 0, 0, 0) |
 [...snip...]
 ```
 There is a flag that permits single entry output because there may occasionally be too many entries to view in the console.
