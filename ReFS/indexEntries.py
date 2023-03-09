@@ -67,10 +67,10 @@ class IndexEntries:
         table = PrettyTable()
         keys = list(entries[0].keys())
         values = list(entries[0].values())
-        table.field_names = keys[:-1] + ["Table Type"] + list(values[-1].keys())
+        table.field_names = ["Nr."] + keys[:-1] + ["Table Type"] + list(values[-1].keys())
         if not entry:
-            for i in entries:
-                table.add_row(list(i.values())[:-1] + [tuple(i.keys())[-1]] + list(tuple(i.values())[-1].values()))
+            for idx, ent in enumerate(entries, 1):
+                table.add_row([idx] + list(ent.values())[:-1] + [tuple(ent.keys())[-1]] + list(tuple(ent.values())[-1].values()))
         elif entry:
-            table.add_row(list(entries[entry - 1].values())[:-1] + [tuple(entries[entry- 1].keys())[-1]] + list(tuple(entries[entry - 1].values())[-1].values()))
+            table.add_row([entry] + list(entries[entry - 1].values())[:-1] + [tuple(entries[entry- 1].keys())[-1]] + list(tuple(entries[entry - 1].values())[-1].values()))
         return table
