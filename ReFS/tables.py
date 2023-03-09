@@ -138,5 +138,5 @@ class ParentChild(Table):
         return hex(self.formater.toDecimal(self.byteArray[0x18:0x20]))
 
     def structure(self) -> dict:
-        return {"Parent ID":self.tableID(self.parent()),
-                "Child ID":self.tableID(self.child())}
+        return {"Parent ID":f"{self.tableID(self.parent())} ({self.parent()})",
+                "Child ID":self.child()}
