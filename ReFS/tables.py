@@ -2,10 +2,33 @@ from typing import Union
 from ReFS.page import PageDescriptor
 from bytesReader.bytesFormater import Formater
 
-class Container:
+class Table:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.byteArray = byteArray
         self.formater = Formater()
+    
+    def tableID(self, val:str) -> str:
+        try:
+            tableIDNames = {0x7: "Upcase",
+                    0x8: "Upcase dup.",
+                    0x9: "Logfile Information",
+                    0xA: "Logfile Information dup.",
+                    0xD: "Trash Stream",
+                    0x500: "Volume Information",
+                    0x501: "Volume Information dup.",
+                    0x520: "File System Metadata",
+                    0x530: "Security",
+                    0x540: "Reparse Index",
+                    0x541: "Reparse Index dup.",
+                    0x520: "File System Metadata",
+                    0x600: "Root Directory"}
+            return tableIDNames[int(val, 16)]
+        except KeyError:
+            return "Other directory table"
+
+class Container(Table):
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+        super().__init__(byteArray)
 
     def containerNumber(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])
@@ -31,53 +54,35 @@ class Container:
                 "Container LCN": self.containerLCN(),
                 "Clusters Per Container": self.clustersPerContainer()}
 
-class ObjectID:
+class ObjectID(Table):
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
-        self.byteArray = byteArray
-        self.formater = Formater()
+        super().__init__(byteArray)
 
-    def id(self):
-        try:
-            tableID = self.formater.toDecimal(self.byteArray[0x8:0x10])
-            tableIDNames = {0x7: "Upcase",
-                    0x8: "Upcase dup.",
-                    0x9: "Logfile Information",
-                    0xA: "Logfile Information dup.",
-                    0xD: "Trash Stream",
-                    0x500: "Volume Information",
-                    0x501: "Volume Information dup.",
-                    0x520: "File System Metadata",
-                    0x530: "Security",
-                    0x540: "Reparse Index",
-                    0x541: "Reparse Index dup.",
-                    0x520: "File System Metadata",
-                    0x600: "Root Directory"}
-            return tableIDNames[tableID]
-        except KeyError:
-            return "Other directory table"
+    def id(self) -> str:
+        return self.tableID(hex(self.formater.toDecimal(self.byteArray[0x8:0x10])))
 
-    def durableLSNOffset(self):
+    def durableLSNOffset(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x18:0x1C])
 
-    def bufferOffset(self):
+    def bufferOffset(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x20:0x24])
 
-    def bufferLength(self):
+    def bufferLength(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x24:0x28])
 
-    def durableLSN(self):
+    def durableLSN(self) -> tuple[int, int]:
         LSN = self.byteArray[0x28:0x30]
         LSN0 = self.formater.toDecimal(LSN[0x0:0x4])
         LSN1 = self.formater.toDecimal(LSN[0x4:0x8])
         return LSN0, LSN1
 
-    def pageReference(self):
+    def pageReference(self) -> tuple[int, int, int, int]:
         return PageDescriptor(self.byteArray[0x30:0xD8]).LCNS()
 
-    def bufferData(self):
+    def bufferData(self) -> bytearray:
         return self.byteArray[self.bufferOffset():self.bufferOffset() + self.bufferLength()]
 
-    def structure(self):
+    def structure(self) -> dict:
         return {"ID": self.id(),
                 "LSN Offset": self.durableLSNOffset(),
                 "Buffer Offset": self.bufferOffset(),
@@ -85,36 +90,35 @@ class ObjectID:
                 "Durable LSN": self.durableLSN(),
                 "Page Reference":self.pageReference()}
 
-class Schema:
+class Schema(Table):
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
-        self.byteArray = byteArray
-        self.formater = Formater()
+        super().__init__(byteArray)
 
-    def id(self):
+    def id(self) -> str:
         return hex(self.formater.toDecimal(self.byteArray[0x0:0x4]))[2:].upper()
-    
-    def schemaSize(self):
+
+    def schemaSize(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x8:0xC][0x0:0x4])
 
-    def schemaOffset(self):
+    def schemaOffset(self) -> int:
         return self.formater.toDecimal(self.byteArray[0xC:0x10])
 
-    def schemaLength(self):
+    def schemaLength(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x20:0x24])
-    
-    def collation(self):
+
+    def collation(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x24:0x28])
-    
-    def rootNodeSize(self):
+
+    def rootNodeSize(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x38:0x3C])
-    
-    def indexRootSize(self):
+
+    def indexRootSize(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x3C:0x40])
 
-    def pageSize(self):
+    def pageSize(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x44:0x48])
 
-    def structure(self):
+    def structure(self) -> dict:
         return {"Schema ID": self.id(),
                 "Schema size ": self.schemaSize(),
                 "Schema Offset": self.schemaOffset(),
@@ -122,3 +126,17 @@ class Schema:
                 "Collation": self.collation(),
                 "Node Size": self.rootNodeSize(),
                 "Page Size": self.pageSize()}
+
+class ParentChild(Table):
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+        super().__init__(byteArray)
+
+    def parent(self) -> str:
+        return hex(self.formater.toDecimal(self.byteArray[0x8:0xA]))
+
+    def child(self) -> str:
+        return hex(self.formater.toDecimal(self.byteArray[0x18:0x20]))
+
+    def structure(self) -> dict:
+        return {"Parent ID":self.tableID(self.parent()),
+                "Child ID":self.tableID(self.child())}

@@ -48,6 +48,8 @@ class IndexEntries:
             return ObjectID(_bytes[16:]).structure()
         elif self.tableIdentifier == "Schema" or self.tableIdentifier == "Schema (Dup.)":
             return Schema(_bytes[16:]).structure()
+        elif self.tableIdentifier == "Parent Child":
+            return ParentChild(_bytes[16:]).structure()
         elif self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Dup.)":
             return Container(_bytes[16:]).structure()
 

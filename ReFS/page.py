@@ -67,7 +67,7 @@ class PageDescriptor:
         self.byteArray = byteArray
         self.formater = Formater()
 
-    def LCNS(self) -> list:
+    def LCNS(self) -> tuple[int, int, int, int]:
         LCN_0 = self.formater.toDecimal(self.byteArray[0x0:0x08])
         LCN_1 = self.formater.toDecimal(self.byteArray[0x08:0x10])
         LCN_2 = self.formater.toDecimal(self.byteArray[0x10:0x18])

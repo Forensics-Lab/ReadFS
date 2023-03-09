@@ -179,24 +179,16 @@ $> py main.py -f path/to/file.001 --node 33751040 --entry 4 --raw
 {'Entry size': 272, 'Key Offset': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Trash Stream', 'LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (1, 0), 'Page Reference': (4157, 0, 0, 0)}}
 ```
 ### Note
-- For now the only tables supported by the --table flag are:
+- The --table and --raw flags are working for the following tables:
     * `Object ID Table`
-    * `Object ID Table (dup.)`
     * `Schema Table`
-    * `Schema Table (dup.)`
     * `Container Table`
-    * `Container Table (dup.)`
-- The --raw flag works for the following tables:
-    * `Object ID Table`
+    * `Parent Child Table`
     * `Object ID Table (dup.)`
-    * `Schema Table`
     * `Schema Table (dup.)`
-    * `Container Table`
     * `Container Table (dup.)`
-    * `Parent Child Table` (For now it carves out general data about each entry in the table, support needs to be added)
 - Support will be added for the following tables/nodes:
     * `All Allocator Tables (Small, Medium, Container)`
-    * `Parent Child Table`
     * `Block Reference Count`
     * `Container Index Table`
     * `Integrity State Table`
