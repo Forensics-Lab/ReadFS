@@ -73,5 +73,5 @@ class IndexEntries:
             for i in entries:
                 table.add_row(list(i.values())[:-1] + [tuple(i.keys())[-1]] + list(tuple(i.values())[-1].values()))
         elif entry:
-            table.add_row(list(entries[entry].values())[:-1] + [tuple(entries[entry].keys())[-1]] + list(tuple(entries[entry].values())[-1].values()))
+            table.add_row(list(entries[entry - 1].values())[:-1] + [tuple(entries[entry- 1].keys())[-1]] + list(tuple(entries[entry - 1].values())[-1].values()))
         return table
