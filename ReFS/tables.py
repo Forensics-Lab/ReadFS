@@ -20,7 +20,6 @@ class Table:
                     0x530: "Security",
                     0x540: "Reparse Index",
                     0x541: "Reparse Index dup.",
-                    0x520: "File System Metadata",
                     0x600: "Root Directory"}
             return tableIDNames[int(val, 16)]
         except KeyError:
