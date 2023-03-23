@@ -1,3 +1,4 @@
+from struct import unpack
 from ReFS.node import Node
 from bytesReader.reader import Reader
 from ReFS.page import PageHeader, PageDescriptor
@@ -5,110 +6,104 @@ from ReFS.page import PageHeader, PageDescriptor
 class Checkpoint(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
         super().__init__(filePath)
-        self.byteArray = super().getBytes(readByteRange, offset=offset)
-        self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
-        self.pageDescriptor = PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
-        self.__pointerList = self.pointerList()
+        self.__byteArray = super().getBytes(readByteRange, offset=offset)
+        self.chStruct = tuple(filter(lambda b: b != b'', unpack("<80s4p2h2iq2i8s4s4p16p14i", self.__byteArray[:0xC8])))
+        self.__containerTableNodeEntries = Node(self.file, [0x0, len(self.__byteArray)], self.containerTablePointer()).indexEntries().getEntries()
 
-    def __getVirtualClusterAddress(self, byteNumber:int) -> int:
-        return self.formater.toDecimal(self.byteArray[byteNumber:byteNumber+104][:4])
-
-    def __phisycalClustersAddress(self, virtualAddresses: list) -> list:
-        plist = []
-        containerTableNodeEntries = Node(self.file, [0x0, len(self.byteArray)], virtualAddresses[7] * len(self.byteArray)).indexEntries().getEntries()
-        for index, address in enumerate(virtualAddresses):
-            if index not in (7, 8, 12): # Skipping Container Table, Container Table Duplicate and Small Allocator Table
-                offset = int(hex(address)[3:], 16)
-                if index in (2, 6, 11): # Container Allocator, Block Reference Count, Integrity State tables
-                    containerOffset = int(hex(address)[2]) - 1
-                    offset = (int(hex(containerTableNodeEntries[containerOffset]["Container"]["Container LCN"])[:-2], 16) + offset)
-                address = offset
-            plist.append(address * len(self.byteArray))
-        return plist
+    def convertToLCN(self, VCN: int = None, skipTable=False, useContainerTable=True):
+        if skipTable: return VCN * len(self.__byteArray)
+        offset = int(hex(VCN)[3:], 16)
+        if useContainerTable:
+            containerOffset = int(hex(VCN)[2]) - 1
+            offset = (int(hex(self.__containerTableNodeEntries[containerOffset]["Container"]["Container LCN"])[:-2], 16) + offset)
+        return offset * len(self.__byteArray)
 
     def majorVersion(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x54:0x56])
+        return self.chStruct[1]
 
     def minorVersion(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x56:0x58])
+        return self.chStruct[2]
+
+    def ReFSVersion(self):
+        return f"{self.majorVersion()}.{self.minorVersion()}"
 
     def selfDescriptorOffset(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x58:0x5C])
+        return self.chStruct[3]
 
     def selfDescriptorLength(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x5C:0x60])
+        return self.chStruct[4]
 
     def chkpVirtualClock(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x60:0x68])
+        return self.chStruct[5]
 
     def allocatorVirtualClock(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x68:0x70])
+        return self.chStruct[6]
 
-    def oldestLogRecordReference(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x78:0x7C])
+    def oldestLogRecordReference(self):
+        return self.chStruct[7]
 
-    def alignment(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x7C:0x80])
+    def unknown(self) -> bytes:
+        return self.chStruct[8]
 
     def reserved(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x80:0x88])
+        return self.chStruct[9]
 
     def pointerCount(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x90:0x94])
+        return self.chStruct[10]
 
-    def pointerList(self) -> list:
-        plist = self.byteArray[0x94:0xC8]
-        return self.__phisycalClustersAddress([self.__getVirtualClusterAddress(self.formater.toDecimal(plist[i:i+4])) for i in range(0, len(plist), 4)])
+    def pointersList(self) -> list:
+        return [self.formater.toDecimal(self.__byteArray[i:i+104][:4]) for i in self.chStruct[-self.pointerCount():]]
 
     def objectIDPointer(self) -> int:
-        return self.__pointerList[0]
+        return self.convertToLCN(self.pointersList()[0])
 
     def mediumAllocatorPointer(self) -> int:
-        return self.__pointerList[1]
+        return self.convertToLCN(self.pointersList()[1])
 
     def containerAllocatorPointer(self) -> int:
-        return self.__pointerList[2]
+        return self.convertToLCN(self.pointersList()[2], useContainerTable=True)
 
     def schemaTablePointer(self) -> int:
-        return self.__pointerList[3]
+        return self.convertToLCN(self.pointersList()[3])
 
     def parentChildTablePointer(self) -> int:
-        return self.__pointerList[4]
+        return self.convertToLCN(self.pointersList()[4])
 
     def objectIDDuplicatePointer(self) -> int:
-        return self.__pointerList[5]
+        return self.convertToLCN(self.pointersList()[5])
 
     def blockReferenceCountPointer(self) -> int:
-        return self.__pointerList[6]
+        return self.convertToLCN(self.pointersList()[6], useContainerTable=True)
 
     def containerTablePointer(self) -> int:
-        return self.__pointerList[7]
+        return self.convertToLCN(self.pointersList()[7], skipTable=True)
 
     def containerTableDuplicatePointer(self) -> int:
-        return self.__pointerList[8]
+        return self.convertToLCN(self.pointersList()[8], skipTable=True)
 
     def schemaTableDuplicatePointer(self) -> int:
-        return self.__pointerList[9]
+        return self.convertToLCN(self.pointersList()[9])
 
     def containerIndexTablePointer(self) -> int:
-        return self.__pointerList[10]
+        return self.convertToLCN(self.pointersList()[10])
 
     def integrityStateTablePointer(self) -> int:
-        return self.__pointerList[11]
+        return self.convertToLCN(self.pointersList()[11], useContainerTable=True)
 
     def smallAllocatorTablePointer(self) -> int:
-        return self.__pointerList[12]
+        return self.convertToLCN(self.pointersList()[12], skipTable=True)
 
     def info(self) -> str:
-        return f"{self.pageHeader.info()}\n"\
+        return f"{PageHeader(self.chStruct[0]).info()}\n"\
                f"<<======================[Checkpoint]=====================>>\n"\
-               f"[+] ReFS Version: {self.majorVersion()}.{self.minorVersion()}\n"\
+               f"[+] ReFS Version: {self.ReFSVersion()}\n"\
                f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()}\n"\
                f"[+] Self Descriptor Length: {self.selfDescriptorLength()}\n"\
                f"[+] Checkpoint Virtual Clock: {self.chkpVirtualClock()}\n"\
                f"[+] Allocator Virtual Clock: {self.allocatorVirtualClock()}\n"\
                f"[+] Oldest Log Record: {self.oldestLogRecordReference()}\n"\
-               f"<<=============[Pointers Bytes Offset Info]==============>>\n"\
+               f"<<==============[Pointers Info and Offsets]==============>>\n"\
+               f"[+] Number Of Pointers: {self.pointerCount()}\n"\
                f"[+] Object ID Table: {self.objectIDPointer()}\n"\
                f"[+] Duplicate Object ID Table: {self.objectIDDuplicatePointer()}\n"\
                f"[+] Medium Allocator Table: {self.mediumAllocatorPointer()}\n"\
@@ -122,4 +117,4 @@ class Checkpoint(Reader):
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
                f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()}\n"\
-               f"{self.pageDescriptor.info()}"
+               f"{PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"

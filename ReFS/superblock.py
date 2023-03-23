@@ -1,37 +1,36 @@
 from ReFS.page import *
+from struct import unpack
 from bytesReader.reader import Reader
 
 class Superblock(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
         super().__init__(filePath)
-        self.byteArray = super().getBytes(readByteRange, offset=offset)
-        self.clusterSize = len(self.byteArray)
-        self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
-        self.pageDescriptor = PageDescriptor(self.byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
+        self.__byteArray = super().getBytes(readByteRange, offset=offset)
+        self.clusterSize = len(self.__byteArray)
+        self.suStruct = tuple(filter(lambda b: b != b'', unpack("<80s4L8pq4i", self.__byteArray[:0x80])))
+        self.pageHeader = PageHeader(self.suStruct[0])
+        self.pageDescriptor = PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
 
     def GUID(self) -> str:
-        temp = [self.formater.reverseBytes(self.byteArray[0x50:0x60][i:i+4]) for i in range(0, len(self.byteArray[0x50:0x60]), 4)]
-        temp = [self.formater.toDecimal(i) for i in temp]
-        sig = (temp[0] ^ temp[1] ^ temp[2] ^ temp[3]).to_bytes(len(temp), "little").hex().upper()
-        return sig
+        return self.formater.toHex((self.suStruct[1] ^ self.suStruct[2] ^ self.suStruct[3] ^ self.suStruct[4]).to_bytes(4, "little"))
 
     def version(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x68:0x70])
+        return self.suStruct[5]
 
     def checkpointOffset(self) -> tuple[int, int]:
-        checkpointRelativeOffset = self.formater.toDecimal(self.byteArray[0x70:0x74])
-        chk1 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset:checkpointRelativeOffset+0x08]) * self.clusterSize
-        chk2 = self.formater.toDecimal(self.byteArray[checkpointRelativeOffset+0x08:checkpointRelativeOffset+0x10]) * self.clusterSize
+        checkpointRelativeOffset = self.suStruct[6]
+        chk1 = self.formater.toDecimal(self.__byteArray[checkpointRelativeOffset:checkpointRelativeOffset+0x08]) * self.clusterSize
+        chk2 = self.formater.toDecimal(self.__byteArray[checkpointRelativeOffset+0x08:checkpointRelativeOffset+0x10]) * self.clusterSize
         return  chk1, chk2
 
     def checkpointReferenceNumber(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x74:0x78])
+        return self.suStruct[7]
 
     def selfDescriptorOffset(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x78:0x7C])
+        return self.suStruct[8]
 
     def selfDescriptorLength(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x7C:0x80])
+        return self.suStruct[9]
 
     def info(self) -> str:
         checkpoint1, checkpoint2 = self.checkpointOffset()

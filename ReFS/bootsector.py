@@ -1,46 +1,47 @@
+from struct import unpack
 from bytesReader.reader import Reader
 
 class BootSector(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
         super().__init__(filePath)
-        self.byteArray = super().getBytes(readByteRange, offset=offset)
+        self.bStruct = unpack("<3s8s5s4sh2sq2i2c6s8s8sq", self.getBytes(readByteRange, offset))
 
     def assemblyCode(self) -> str:
-        return self.formater.toHex(self.byteArray[0x0:0x03])
+        return self.bStruct[0]
 
     def REFSSifniture(self) -> str:
-        return self.formater.toString(self.byteArray[0x03:0x0B])
+        return self.formater.toString(self.bStruct[1])
 
     def mustBeZero(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x0B:0x10])
+        return self.bStruct[2]
 
     def FSRSIdentifier(self) -> str:
-        return self.formater.toString(self.byteArray[0x10:0x14])
+        return self.formater.toString(self.bStruct[3])
 
     def sizeOfVBR(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x14:0x16])
+        return self.bStruct[4]
 
     def checksum(self) -> str:
-        return self.formater.toHex(self.byteArray[0x16:0x18])
+        return self.formater.toHex(self.bStruct[5])
 
     def sectorCount(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x18:0x20])
+        return self.bStruct[6]
 
     def bytesPerSector(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x20:0x24])
+        return self.bStruct[7]
 
     def sectorsPerCluster(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x24:0x28])
+        return self.bStruct[8]
 
     def ReFSVersion(self) -> str:
-        major, minor = self.byteArray[0x28:0x2A]
+        major, minor = self.formater.toDecimal(self.bStruct[9]), self.formater.toDecimal(self.bStruct[10])
         return f"{major}.{minor}"
 
     def volumeSerialNumber(self) -> str:
-        return self.formater.toHex(self.byteArray[0x38:0x40])
+        return self.formater.toHex(self.bStruct[13])
 
     def bytesPerContainer(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x40:0x48])
+        return self.bStruct[14]
 
     def superBlockOffset(self) -> int:
         return 0x1e * self.sectorsPerCluster() * self.bytesPerSector()

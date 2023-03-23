@@ -1,35 +1,32 @@
 from typing import Union
+from struct import unpack
 from bytesReader.bytesFormater import Formater
 
 class PageHeader:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
-        self.byteArray = byteArray
         self.formater = Formater()
+        self.phStruct = unpack("<4s2i4s8s8s6q", byteArray)
 
     def pageSignature(self) -> str:
-        return self.formater.toString(self.byteArray[0x0:0x4])
+        return self.formater.toString(self.phStruct[0])
 
     def always2(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x4:0x8])
+        return self.phStruct[1]
 
     def always0(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x8:0xC])
+        return self.phStruct[2]
 
     def volumeSignature(self) -> str:
-        return self.formater.toHex(self.byteArray[0xC:0x10])
+        return self.formater.toHex(self.phStruct[3])
 
     def virtualAllocatorClock(self) -> str:
-        return self.formater.toHex(self.byteArray[0x10:0x18])
+        return self.formater.toHex(self.phStruct[4])
 
     def treeUpdateClock(self) -> str:
-        return self.formater.toHex(self.byteArray[0x18:0x20])
+        return self.formater.toHex(self.phStruct[5])
 
     def LCNS(self) -> list:
-        LCN_0 = self.formater.toDecimal(self.byteArray[0x20:0x28])
-        LCN_1 = self.formater.toDecimal(self.byteArray[0x28:0x30])
-        LCN_2 = self.formater.toDecimal(self.byteArray[0x30:0x38])
-        LCN_3 = self.formater.toDecimal(self.byteArray[0x38:0x40])
-        return LCN_0, LCN_1, LCN_2, LCN_3
+        return self.phStruct[6:10]
 
     def tableIdentifier(self) -> str:
         identifiersStruct = {0x2: "Object ID",
@@ -46,8 +43,8 @@ class PageHeader:
                              0xF: "Integrity State",
                              0x22: "Small Allocator"}
 
-        high = self.formater.toDecimal(self.byteArray[0x40:0x48])
-        low = self.formater.toDecimal(self.byteArray[0x48:0x50])
+        high = self.phStruct[10]
+        low = self.phStruct[11]
         identifier = high + low
         return identifiersStruct[identifier] if identifier in identifiersStruct else "Not A Table"
 
@@ -64,25 +61,24 @@ class PageHeader:
 
 class PageDescriptor:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
-        self.byteArray = byteArray
+        self.pdStruct = tuple(filter(lambda b: b != b'', unpack("<4qh2bh2p8s", byteArray[:0x30])))
         self.formater = Formater()
 
     def LCNS(self) -> tuple[int, int, int, int]:
-        LCN_0 = self.formater.toDecimal(self.byteArray[0x0:0x08])
-        LCN_1 = self.formater.toDecimal(self.byteArray[0x08:0x10])
-        LCN_2 = self.formater.toDecimal(self.byteArray[0x10:0x18])
-        LCN_3 = self.formater.toDecimal(self.byteArray[0x18:0x20])
-        return LCN_0, LCN_1, LCN_2, LCN_3
+        return self.pdStruct[:4]
 
     def checksumType(self) -> str:
-        chkt = self.formater.toDecimal(self.byteArray[0x22:0x23])
+        chkt = self.pdStruct[5]
         return "CRC32-C" if chkt == 1 else "CRC64-ECMA-182"
     
     def checksumOffset(self):
-        return self.formater.toDecimal(self.byteArray[0x23:0x24])
+        return self.pdStruct[6]
     
     def checksumLength(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0x24:0x26])
+        return self.pdStruct[7]
+
+    def checksum(self) -> str:
+        return self.formater.toHex(self.pdStruct[8])
 
     def info(self) -> str:
         LCN_0, LCN_1, LCN_2, LCN_3 = self.LCNS() 
@@ -91,20 +87,10 @@ class PageDescriptor:
                f"[+] LCN_1: {LCN_1}\n"\
                f"[+] LCN_2: {LCN_2}\n"\
                f"[+] LCN_3: {LCN_3}\n"\
+               f"<<=================[Page Checksum Info]==================>>\n"\
                f"[+] Checksum Type: {self.checksumType()}\n"\
                f"[+] Checksum Offset: {self.checksumOffset()}\n"\
                f"[+] Checksum Length: {self.checksumLength()}\n"\
-               f"{PageChecksumData(self.byteArray[0x20 + self.checksumOffset():][:self.checksumLength()]).info()}"
-
-class PageChecksumData:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
-        self.byteArray = byteArray
-        self.formater = Formater()
-
-    def checksum(self) -> str:
-        return self.formater.toHex(self.byteArray)
-
-    def info(self) -> str:
-        return f"<<=================[Page Data Checksum]==================>>\n"\
-               f"[+] Page Data Checksum: {self.checksum()}\n"\
-               f"<<=======================================================>>" 
+               f"[+] Page Checksum: {self.checksum()}\n"\
+               f"<<=======================================================>>"
+               
