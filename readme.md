@@ -32,12 +32,12 @@ $> py main.py -f path/to/file.001 -ii
 [+] Cluster size: 65,536 bytes
 [+] Sectors per Cluster: 128
 [+] Clusters per Container: 1,024
-[+] Number of Containers: 79
-[+] Number of Clusters: 80,896
-[+] Number of Sectors: 10,354,688
+[+] Number of Containers: 80
+[+] Number of Clusters: 81,920
+[+] Number of Sectors: 10,485,760
 [+] Container size: 67,108,864 bytes
-[+] Volume size: 5,301,600,256 bytes
-[+] Volume Serial Number: 7EBA2960BA2915E5
+[+] Volume size: 5,368,709,120 bytes
+[+] Volume Serial Number: CA820A8B820A7BE7
 <<=======================================================>>
 ```
 ## Superblock
@@ -49,18 +49,18 @@ $> py main.py -f path/to/file.001 -bi superblock
 ```
 <<=====================[Page Header]=====================>>
 [+] Page Signature: SUPB
-[+] Volume Signature: 5C1FB1E2
+[+] Volume Signature: 9FE57C04
 [+] LCN_0: 30
 [+] LCN_1: 0
 [+] LCN_2: 0
 [+] LCN_3: 0
 [+] Table Type: Not A Table
 <<======================[Superblock]=====================>>
-[+] GUID: 5C1FB1E2
+[+] GUID: 9FE57C04
 [+] Superblock Version: 1
 [+] Checkpoint Reference Number: 2
-[+] Checkpoint1 Offset: 55312384 bytes
-[+] Checkpoint2 Offset: 638255104 bytes
+[+] Checkpoint1 Offset: 55967744 bytes
+[+] Checkpoint2 Offset: 646316032 bytes
 [+] Self Descriptor Relative Offset: 208 bytes
 [+] Self Descriptor Length: 104 bytes
 <<================[Self Page Descriptor]=================>>
@@ -68,11 +68,11 @@ $> py main.py -f path/to/file.001 -bi superblock
 [+] LCN_1: 0
 [+] LCN_2: 0
 [+] LCN_3: 0
+<<=================[Page Checksum Info]==================>>
 [+] Checksum Type: CRC64-ECMA-182
 [+] Checksum Offset: 8
 [+] Checksum Length: 8
-<<=================[Page Data Checksum]==================>>
-[+] Page Data Checksum: DDA05B730320F31C
+[+] Page Checksum: 84D80F0E0763B9FA
 <<=======================================================>>
 ```
 ## Checkpoint
@@ -83,8 +83,8 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 ```
 <<=====================[Page Header]=====================>>
 [+] Page Signature: CHKP
-[+] Volume Signature: 5C1FB1E2
-[+] LCN_0: 844
+[+] Volume Signature: 9FE57C04
+[+] LCN_0: 854
 [+] LCN_1: 0
 [+] LCN_2: 0
 [+] LCN_3: 0
@@ -93,33 +93,34 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 [+] ReFS Version: 3.4
 [+] Self Descriptor Relative Offset: 208
 [+] Self Descriptor Length: 104
-[+] Checkpoint Virtual Clock: 17
-[+] Allocator Virtual Clock: 13
-[+] Oldest Log Record: 2
-<<=============[Pointers Bytes Offset Info]==============>>
-[+] Object ID Table: 34209792
-[+] Duplicate Object ID Table: 34275328
-[+] Medium Allocator Table: 36896768
-[+] Container Allocator Table: 3211264
+[+] Checkpoint Virtual Clock: 16
+[+] Allocator Virtual Clock: 12
+[+] Oldest Log Record: 0
+<<==============[Pointers Info and Offsets]==============>>
+[+] Number Of Pointers: 13
+[+] Object ID Table: 4587520
+[+] Duplicate Object ID Table: 34013184
+[+] Medium Allocator Table: 36700160
+[+] Container Allocator Table: 3145728
 [+] Schema Table: 2949120
 [+] Duplicate Schema Table: 3014656
-[+] Parent Child Table: 34340864
+[+] Parent Child Table: 2883584
 [+] Block Reference Count Table: 3342336
-[+] Container Table: 67305472
-[+] Duplicate Container Table: 67371008
+[+] Container Table: 100663296
+[+] Duplicate Container Table: 100859904
 [+] Container Index Table: 2686976
 [+] Integrity State Table: 3276800
-[+] Small Allocator Table: 67502080
+[+] Small Allocator Table: 67108864
 <<================[Self Page Descriptor]=================>>
-[+] LCN_0: 844
+[+] LCN_0: 854
 [+] LCN_1: 0
 [+] LCN_2: 0
 [+] LCN_3: 0
+<<=================[Page Checksum Info]==================>>
 [+] Checksum Type: CRC64-ECMA-182
 [+] Checksum Offset: 8
 [+] Checksum Length: 8
-<<=================[Page Data Checksum]==================>>
-[+] Page Data Checksum: 4FE421E97BEC00C5
+[+] Page Checksum: FC9AF7DD91EAE85F
 <<=======================================================>>
 ```
 ## Node
@@ -127,13 +128,13 @@ As of now the only tables that the Node class can parse are the Container Table,
 
 General Node information can be displayed by passing the offset to a table found in the checkpoint. Let's take the Object ID Table pointer offset for example:
 ```cmd
-$> py main.py -f path/to/file.001 --node 33751040 --info
+$> py main.py -f path/to/file.001 --node 4587520 --info
 ```
 ```
 <<=====================[Page Header]=====================>>
 [+] Page Signature: MSB+
-[+] Volume Signature: 5C1FB1E2
-[+] LCN_0: 4611
+[+] Volume Signature: 9FE57C04
+[+] LCN_0: 4166
 [+] LCN_1: 0
 [+] LCN_2: 0
 [+] LCN_3: 0
@@ -143,22 +144,22 @@ $> py main.py -f path/to/file.001 --node 33751040 --info
 [+] Root Fixed Size: 40
 [+] Table Schema 1 Identifier: E030
 [+] Table Schema 2 Identifier: E030
-[+] Table Rows Number: 18
+[+] Table Rows Number: 115
 [+] Number of Extents: 0
 <<====================[Index Header]=====================>>
 [+] Node Type: Root
 [+] Node Height: 0
 [+] Start Of Data Area: 40
-[+] End Of Data Area: 5000
-[+] Key Index Start: 64832
+[+] End Of Data Area: 32160
+[+] Key Index Start: 64444
 [+] Key Index End: 64904
-[+] Key Index Entries: 18
-[+] Node Free Bytes: 59832
+[+] Key Index Entries: 115
+[+] Node Free Bytes: 32284
 <<=======================================================>>
 ```
 Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag and specify the output format (--table or --raw):
 ```cmd
-$> py main.py -f path/to/file.001 --node 33751040 --entries --table
+$> py main.py -f path/to/file.001 --node 4587520 --entries --table
 ```
 ```
 +-----+------------+------------+----------+---------+--------------+------------+------------+--------------------------+------------+---------------+---------------+-------------+-----------------+
@@ -173,7 +174,7 @@ $> py main.py -f path/to/file.001 --node 33751040 --entries --table
 ```
 There is a flag that permits single entry output because there may occasionally be too many entries to view in the console.
 ```cmd
-$> py main.py -f path/to/file.001 --node 33751040 --entry 4 --raw
+$> py main.py -f path/to/file.001 --node 4587520 --entry 4 --raw
 ```
 ```
 {'Entry size': 272, 'Key Offset': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Trash Stream', 'LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (1, 0), 'Page Reference': (4157, 0, 0, 0)}}
