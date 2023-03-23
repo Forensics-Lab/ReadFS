@@ -10,7 +10,7 @@ class Checkpoint(Reader):
         self.chStruct = tuple(filter(lambda b: b != b'', unpack("<80s4p2h2iq2i8s4s4p16p14i", self.__byteArray[:0xC8])))
         self.__containerTableNodeEntries = Node(self.file, [0x0, len(self.__byteArray)], self.containerTablePointer()).indexEntries().getEntries()
 
-    def convertToLCN(self, VCN: int = None, skipTable=False, useContainerTable=True):
+    def convertToLCN(self, VCN: int = None, skipTable: bool = False, useContainerTable: bool = True) -> int:
         if skipTable: return VCN * len(self.__byteArray)
         offset = int(hex(VCN)[3:], 16)
         if useContainerTable:
@@ -24,7 +24,7 @@ class Checkpoint(Reader):
     def minorVersion(self) -> int:
         return self.chStruct[2]
 
-    def ReFSVersion(self):
+    def ReFSVersion(self) -> str:
         return f"{self.majorVersion()}.{self.minorVersion()}"
 
     def selfDescriptorOffset(self) -> int:
@@ -39,7 +39,7 @@ class Checkpoint(Reader):
     def allocatorVirtualClock(self) -> int:
         return self.chStruct[6]
 
-    def oldestLogRecordReference(self):
+    def oldestLogRecordReference(self) -> int:
         return self.chStruct[7]
 
     def unknown(self) -> bytes:

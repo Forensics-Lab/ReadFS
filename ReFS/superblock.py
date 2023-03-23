@@ -8,8 +8,6 @@ class Superblock(Reader):
         self.__byteArray = super().getBytes(readByteRange, offset=offset)
         self.clusterSize = len(self.__byteArray)
         self.suStruct = tuple(filter(lambda b: b != b'', unpack("<80s4L8pq4i", self.__byteArray[:0x80])))
-        self.pageHeader = PageHeader(self.suStruct[0])
-        self.pageDescriptor = PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()])
 
     def GUID(self) -> str:
         return self.formater.toHex((self.suStruct[1] ^ self.suStruct[2] ^ self.suStruct[3] ^ self.suStruct[4]).to_bytes(4, "little"))
@@ -34,7 +32,7 @@ class Superblock(Reader):
 
     def info(self) -> str:
         checkpoint1, checkpoint2 = self.checkpointOffset()
-        return f"{self.pageHeader.info()}\n"\
+        return f"{PageHeader(self.suStruct[0]).info()}\n"\
                f"<<======================[Superblock]=====================>>\n"\
                f"[+] GUID: {self.GUID()}\n"\
                f"[+] Superblock Version: {self.version()}\n"\
@@ -43,4 +41,4 @@ class Superblock(Reader):
                f"[+] Checkpoint2 Offset: {checkpoint2} bytes\n"\
                f"[+] Self Descriptor Relative Offset: {self.selfDescriptorOffset()} bytes\n"\
                f"[+] Self Descriptor Length: {self.selfDescriptorLength()} bytes\n"\
-               f"{self.pageDescriptor.info()}"
+               f"{PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"
