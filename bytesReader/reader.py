@@ -11,3 +11,4 @@ class Reader():
             file.seek(offset + byteRange[0])
             data = file.read(abs(byteRange[0] - byteRange[1]))
         return data
+    

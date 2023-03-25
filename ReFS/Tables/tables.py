@@ -1,5 +1,5 @@
 from typing import Union
-from ReFS.page import PageDescriptor
+from ReFS.Page import PageDescriptor
 from bytesReader.bytesFormater import Formater
 
 class Table:
@@ -9,19 +9,8 @@ class Table:
     
     def tableID(self, val:str) -> str:
         try:
-            tableIDNames = {0x7: "Upcase",
-                    0x8: "Upcase dup.",
-                    0x9: "Logfile Information",
-                    0xA: "Logfile Information dup.",
-                    0xD: "Trash Stream",
-                    0x500: "Volume Information",
-                    0x501: "Volume Information dup.",
-                    0x520: "File System Metadata",
-                    0x530: "Security",
-                    0x540: "Reparse Index",
-                    0x541: "Reparse Index dup.",
-                    0x600: "Root Directory"}
-            return tableIDNames[int(val, 16)]
+            tableIDNames = self.formater.get_file_contents("ReFS/Identifiers/Tables/tableIdentifiers.json")
+            return tableIDNames[str(int(val, 16))]
         except KeyError:
             return "Other directory table"
 

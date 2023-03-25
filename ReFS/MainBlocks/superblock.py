@@ -1,4 +1,4 @@
-from ReFS.page import *
+from ReFS.Page import *
 from struct import unpack
 from bytesReader.reader import Reader
 

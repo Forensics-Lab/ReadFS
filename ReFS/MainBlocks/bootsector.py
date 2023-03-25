@@ -4,7 +4,7 @@ from bytesReader.reader import Reader
 class BootSector(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
         super().__init__(filePath)
-        self.bStruct = unpack("<3s8s5s4sh2sq2i2c6s8s8sq", self.getBytes(readByteRange, offset))
+        self.bStruct = unpack("<3s8s5s4sh2sq2i2b6s8s8sq", self.getBytes(readByteRange, offset))
 
     def assemblyCode(self) -> str:
         return self.bStruct[0]
@@ -34,8 +34,7 @@ class BootSector(Reader):
         return self.bStruct[8]
 
     def ReFSVersion(self) -> str:
-        major, minor = self.formater.toDecimal(self.bStruct[9]), self.formater.toDecimal(self.bStruct[10])
-        return f"{major}.{minor}"
+        return f"{self.bStruct[9]}.{self.bStruct[10]}"
 
     def volumeSerialNumber(self) -> str:
         return self.formater.toHex(self.bStruct[13])

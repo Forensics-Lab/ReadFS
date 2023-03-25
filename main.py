@@ -1,8 +1,6 @@
 import argparse
-from ReFS.node import Node
-from ReFS.bootsector import BootSector
-from ReFS.superblock import Superblock
-from ReFS.checkpoint import Checkpoint
+from ReFS.Node import Node
+from ReFS.MainBlocks import BootSector, Superblock, Checkpoint 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help="Path to file", metavar='', required=True)
