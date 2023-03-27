@@ -1,9 +1,6 @@
 from ReFS.Page import PageHeader
-from bytesReader.reader import Reader
-from ReFS.Index.dataArea import DataArea
-from ReFS.Index.indexHeader import IndexHeader
-from ReFS.Index.indexEntries import IndexEntries
-from ReFS.Index.indexElementStruct import IndexElement
+from bytesReader import Reader
+from ReFS.Index import DataArea, IndexHeader, IndexEntries, IndexElement
 
 class Node(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:

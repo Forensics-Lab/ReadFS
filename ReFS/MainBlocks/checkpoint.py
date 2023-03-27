@@ -1,7 +1,7 @@
 from ReFS.Page import *
 from struct import unpack
-from ReFS.Node.node import Node
-from bytesReader.reader import Reader
+from ReFS.Node import Node
+from bytesReader import Reader
 
 class Checkpoint(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:

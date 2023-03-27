@@ -1,6 +1,6 @@
 from typing import Union
 from struct import unpack
-from bytesReader.bytesFormater import Formater
+from bytesReader import Formater
 
 
 class PageDescriptor:

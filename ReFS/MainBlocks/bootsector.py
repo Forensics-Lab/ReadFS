@@ -1,5 +1,5 @@
 from struct import unpack
-from bytesReader.reader import Reader
+from bytesReader import Reader
 
 class BootSector(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:

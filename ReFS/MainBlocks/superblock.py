@@ -1,6 +1,6 @@
 from ReFS.Page import *
 from struct import unpack
-from bytesReader.reader import Reader
+from bytesReader import Reader
 
 class Superblock(Reader):
     def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:

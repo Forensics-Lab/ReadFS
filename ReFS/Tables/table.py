@@ -1,5 +1,5 @@
 from typing import Union
-from bytesReader.bytesFormater import Formater
+from bytesReader import Formater
 
 class Table:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
