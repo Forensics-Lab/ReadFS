@@ -1,15 +1,15 @@
 from typing import Union
-from ReFS.Tables.tables import *
+from ReFS.Tables import *
 from prettytable import PrettyTable
 from bytesReader.bytesFormater import Formater
 
-
 class IndexEntries:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysCount:int, tableIdentifier) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysCount:int, tableIdentifier, indexRootvariableComponent:bytes) -> None:
         self.formater = Formater()
         self.keysCont = keysCount
         self.byteArray = byteArray
         self.tableIdentifier = tableIdentifier
+        self.indexRootvariableComponent = indexRootvariableComponent
 
     def entrySize(self, _bytes: bytes) -> int:
         return self.formater.toDecimal(_bytes[0x0:0x4])
@@ -45,14 +45,18 @@ class IndexEntries:
         return entryGeneralHeader
 
     def __tableSpecifficStruct(self, _bytes: bytes) -> Union[Container, ObjectID]:
-        if self.tableIdentifier == "Object ID" or self.tableIdentifier == "Object ID (Dup.)":
+        if self.tableIdentifier in ("Object ID", "Object ID (Dup.)"):
             return ObjectID(_bytes[16:]).structure()
-        elif self.tableIdentifier == "Schema" or self.tableIdentifier == "Schema (Dup.)":
+        elif self.tableIdentifier in ("Schema", "Schema (Dup.)"):
             return Schema(_bytes[16:]).structure()
-        elif self.tableIdentifier == "Parent Child":
+        elif self.tableIdentifier in "Parent Child":
             return ParentChild(_bytes[16:]).structure()
-        elif self.tableIdentifier == "Container" or self.tableIdentifier == "Container (Dup.)":
+        elif self.tableIdentifier in ("Container", "Container (Dup.)"):
             return Container(_bytes[16:]).structure()
+        elif self.tableIdentifier in ("Upcase", "Upcase (Dup.)"):
+            return Upcase(_bytes[16:]).structure()
+        elif self.tableIdentifier in ("Logfile Information", "Logfile Information (Dup.)"):
+            return LogFile(_bytes[16:]).structure()
 
     def getEntries(self) -> list:
         ent = []
@@ -63,7 +67,7 @@ class IndexEntries:
             ent.append(self.__getKeyValueData(key))
             relativeOffset += keySize
         return tuple(ent)
-    
+
     def logEntry(self, entry=None):
         # This function will need to be redone but for now it gets the job done.
         entries = self.getEntries()

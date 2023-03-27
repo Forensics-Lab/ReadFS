@@ -2,7 +2,6 @@ from typing import Union
 from struct import unpack
 from bytesReader.bytesFormater import Formater
 
-
 class PageHeader:
     def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         self.formater = Formater()
@@ -32,7 +31,7 @@ class PageHeader:
     def tableIdentifier(self) -> str:
         identifiersStruct = self.formater.get_file_contents("ReFS/Identifiers/Tables/tableIdentifiers.json")
         identifier = str(self.phStruct[10] ^ self.phStruct[11])
-        return identifiersStruct[identifier] if identifier in identifiersStruct else "Not A Table"
+        return identifiersStruct[identifier] if identifier in identifiersStruct else identifier
 
     def info(self) -> str:
         LCN_0, LCN_1, LCN_2, LCN_3 = self.LCNS()
