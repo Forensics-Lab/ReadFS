@@ -36,30 +36,24 @@ def main():
 
     if args.image_info:
         print(bootSector.info())
-    if args.block_info:
-        if args.block_info == "superblock":
-            print(superblock.info())
-        elif args.block_info == "checkpoint":
-            print(checkpoint.info())
-
+    if args.block_info == "superblock":
+        print(superblock.info())
+    if args.block_info == "checkpoint":
+        print(checkpoint.info())
     if args.node:
         node = Node(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), args.node))
         indexEntry = node.indexEntries()
         if args.info:
             print(node.info())
-        # args.entries flags will be updated in the future. 
-        # Need to find a more efficient/elegant way to do it
-        if args.entries:
-            if args.json:
-                for entry in indexEntry.getEntries():
-                    print(entry)
-            elif args.table:
+        if args.entries and args.json:
+            for entry in indexEntry.getEntries():
+                print(entry)
+        if args.entries and args.table:
                 print(indexEntry.logEntry())
-        if args.entry:
-            if args.json:
-                print(indexEntry.getEntries()[args.entry])
-            elif args.table:
-                print(indexEntry.logEntry(args.entry))
+        if args.entry and args.json:
+            print(indexEntry.getEntries()[args.entry])
+        if args.entry and args.table:
+            print(indexEntry.logEntry(args.entry))
 
 if __name__ == "__main__":
     main()
