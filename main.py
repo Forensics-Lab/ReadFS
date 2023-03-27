@@ -1,6 +1,7 @@
 import argparse
 from ReFS.Node import Node
-from ReFS.MainBlocks import BootSector, Superblock, Checkpoint 
+from Managers.EvidenceFile import Reader
+from ReFS.MainBlocks import BootSector, Superblock, Checkpoint
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help="Path to file", metavar='', required=True)
@@ -25,13 +26,13 @@ entriesArgs.required = True if (parser.parse_args().entries or parser.parse_args
 
 args = parser.parse_args()
 
+EVIDENCE_FILE = Reader(args.file)
+
 def main():
-    bootSector = BootSector(args.file, [0x0, 0x48])
-    clusterSize = bootSector.clusterSize()
-    superblockOffset = bootSector.superBlockOffset()
-    superblock = Superblock(args.file, [0x0, clusterSize], superblockOffset)
-    checkpointOffset = superblock.checkpointOffset()[0]
-    checkpoint = Checkpoint(args.file, [0x0, clusterSize], checkpointOffset)
+    bootSector = BootSector(EVIDENCE_FILE.getBytes(0x48))
+    superblock = Superblock(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), bootSector.superBlockOffset()))
+    checkpoint = Checkpoint(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), superblock.checkpointOffset()[0]))
+    checkpoint.setContainerTableEntries(Node(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), checkpoint.containerTablePointer())).indexEntries().getEntries())
 
     if args.image_info:
         print(bootSector.info())
@@ -42,7 +43,7 @@ def main():
             print(checkpoint.info())
 
     if args.node:
-        node = Node(args.file, [0x0, clusterSize], args.node)
+        node = Node(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), args.node))
         indexEntry = node.indexEntries()
         if args.info:
             print(node.info())

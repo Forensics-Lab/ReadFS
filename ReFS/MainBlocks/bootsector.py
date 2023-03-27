@@ -1,10 +1,10 @@
 from struct import unpack
-from bytesReader import Reader
+from Managers.Bytes import Formater
 
-class BootSector(Reader):
-    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
-        super().__init__(filePath)
-        self.bStruct = unpack("<3s8s5s4sh2sq2i2b6s8s8sq", self.getBytes(readByteRange, offset))
+class BootSector():
+    def __init__(self, _bytes: bytes) -> None:
+        self.formater = Formater()
+        self.bStruct = unpack("<3s8s5s4sh2sq2i2b6s8s8sq", _bytes)
 
     def assemblyCode(self) -> str:
         return self.bStruct[0]

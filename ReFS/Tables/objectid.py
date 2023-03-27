@@ -2,7 +2,6 @@ from typing import Union
 from ReFS.Tables import Table
 from ReFS.Page import PageDescriptor
 
-
 class ObjectID(Table):
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
         super().__init__(byteArray)

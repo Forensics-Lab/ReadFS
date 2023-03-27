@@ -1,7 +1,7 @@
 from typing import Union
 from ReFS.Tables import *
 from prettytable import PrettyTable
-from bytesReader import Formater
+from Managers.Bytes import Formater
 
 class IndexEntries:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysCount:int, tableIdentifier, indexRootvariableComponent:bytes) -> None:

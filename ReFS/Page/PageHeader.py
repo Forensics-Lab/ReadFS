@@ -1,6 +1,7 @@
 from typing import Union
 from struct import unpack
-from bytesReader import Formater
+from Managers.Bytes import Formater
+from Managers.Handlers import Config
 
 class PageHeader:
     def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
@@ -29,7 +30,7 @@ class PageHeader:
         return self.phStruct[6:10]
 
     def tableIdentifier(self) -> str:
-        identifiersStruct = self.formater.get_file_contents("ReFS/Identifiers/Tables/tableIdentifiers.json")
+        identifiersStruct = Config().get_file_contents("ReFS/Identifiers/Tables/tableIdentifiers.json")
         identifier = str(self.phStruct[10] ^ self.phStruct[11])
         return identifiersStruct[identifier] if identifier in identifiersStruct else identifier
 

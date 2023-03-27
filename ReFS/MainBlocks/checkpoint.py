@@ -1,14 +1,16 @@
 from ReFS.Page import *
 from struct import unpack
-from ReFS.Node import Node
-from bytesReader import Reader
+from Managers.Bytes import Formater
 
-class Checkpoint(Reader):
-    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
-        super().__init__(filePath)
-        self.__byteArray = super().getBytes(readByteRange, offset=offset)
+class Checkpoint():
+    def __init__(self, _bytes: bytes) -> None:
+        self.__byteArray = _bytes
+        self.formater = Formater()
+        self.__containerTableNodeEntries = None
         self.chStruct = tuple(filter(lambda b: b != b'', unpack("<80s4p2h2iq2i8s4s4p16p14i", self.__byteArray[:0xC8])))
-        self.__containerTableNodeEntries = Node(self.file, [0x0, len(self.__byteArray)], self.containerTablePointer()).indexEntries().getEntries()
+
+    def setContainerTableEntries(self, entries:list):
+        self.__containerTableNodeEntries = entries
 
     def convertToLCN(self, VCN: int = None, skipTable: bool = False, useContainerTable: bool = True) -> int:
         if skipTable: return VCN * len(self.__byteArray)

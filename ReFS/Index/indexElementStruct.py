@@ -1,6 +1,5 @@
 from typing import Union
-from bytesReader import Formater
-
+from Managers.Bytes import Formater
 
 class IndexElement:
     def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:

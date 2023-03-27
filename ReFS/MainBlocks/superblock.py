@@ -1,11 +1,11 @@
 from ReFS.Page import *
 from struct import unpack
-from bytesReader import Reader
+from Managers.Bytes import Formater
 
-class Superblock(Reader):
-    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
-        super().__init__(filePath)
-        self.__byteArray = super().getBytes(readByteRange, offset=offset)
+class Superblock():
+    def __init__(self, _bytes: bytes) -> None:
+        self.__byteArray = _bytes
+        self.formater = Formater()
         self.clusterSize = len(self.__byteArray)
         self.suStruct = tuple(filter(lambda b: b != b'', unpack("<80s4L8pq4i", self.__byteArray[:0x80])))
 

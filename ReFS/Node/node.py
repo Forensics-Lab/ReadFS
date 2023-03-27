@@ -1,11 +1,11 @@
 from ReFS.Page import PageHeader
-from bytesReader import Reader
+from Managers.Bytes import Formater
 from ReFS.Index import DataArea, IndexHeader, IndexEntries, IndexElement
 
-class Node(Reader):
-    def __init__(self, filePath:str, readByteRange:list, offset=0) -> None:
-        super().__init__(filePath)
-        self.byteArray = super().getBytes(readByteRange, offset=offset)
+class Node():
+    def __init__(self, _bytes: bytes) -> None:
+        self.byteArray = _bytes
+        self.formater = Formater()
         self.pageHeader = PageHeader(self.byteArray[0x0:0x50])
         self.indexHeaderOffset = self.indexRoot().size() + 0x50
 
