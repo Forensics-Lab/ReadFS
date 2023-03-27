@@ -7,7 +7,7 @@ class Superblock():
         self.__byteArray = _bytes
         self.formater = Formater()
         self.clusterSize = len(self.__byteArray)
-        self.suStruct = tuple(filter(lambda b: b != b'', unpack("<80s4L8pq4i", self.__byteArray[:0x80])))
+        self.suStruct = self.formater.removeEmptyEntries(unpack("<80s4L8pq4i", self.__byteArray[:0x80]))
 
     def GUID(self) -> str:
         return self.formater.toHex((self.suStruct[1] ^ self.suStruct[2] ^ self.suStruct[3] ^ self.suStruct[4]).to_bytes(4, "little"))

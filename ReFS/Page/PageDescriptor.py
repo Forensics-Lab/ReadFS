@@ -4,8 +4,8 @@ from Managers.Bytes import Formater
 
 class PageDescriptor:
     def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
-        self.pdStruct = tuple(filter(lambda b: b != b'', unpack("<4qh2bh2p8s", byteArray[:0x30])))
         self.formater = Formater()
+        self.pdStruct = self.formater.removeEmptyEntries(unpack("<4qh2bh2p8s", byteArray[:0x30]))
 
     def LCNS(self) -> tuple[int, int, int, int]:
         return self.pdStruct[:4]

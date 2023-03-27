@@ -13,3 +13,6 @@ class Formater:
 
     def toHex(self, _bytes: bytes) -> str:
         return self.reverseBytes(_bytes).hex().upper()
+
+    def removeEmptyEntries(self, tup: tuple[bytes]):
+        return tuple(filter(lambda b: b != b'', tup))

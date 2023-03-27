@@ -7,7 +7,7 @@ class Checkpoint():
         self.__byteArray = _bytes
         self.formater = Formater()
         self.__containerTableNodeEntries = None
-        self.chStruct = tuple(filter(lambda b: b != b'', unpack("<80s4p2h2iq2i8s4s4p16p14i", self.__byteArray[:0xC8])))
+        self.chStruct = self.formater.removeEmptyEntries(unpack("<80s4p2h2iq2i8s4s4p16p14i", self.__byteArray[:0xC8]))
 
     def setContainerTableEntries(self, entries:list):
         self.__containerTableNodeEntries = entries
