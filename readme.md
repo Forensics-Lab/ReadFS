@@ -124,8 +124,6 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 <<=======================================================>>
 ```
 ## Node
-As of now the only tables that the Node class can parse are the Container Table, Object ID and their duplicates, in the near future this will change!
-
 General Node information can be displayed by passing the offset to a table found in the checkpoint. Let's take the Object ID Table pointer offset for example:
 ```cmd
 $> py main.py -f path/to/file.001 --node 4587520 --info
