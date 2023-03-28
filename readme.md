@@ -155,7 +155,7 @@ $> py main.py -f path/to/file.001 --node 4587520 --info
 [+] Node Free Bytes: 32284
 <<=======================================================>>
 ```
-Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag and specify the output format (--table or --raw):
+Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag and specify the output format (--table or --json):
 ```cmd
 $> py main.py -f path/to/file.001 --node 4587520 --entries --table
 ```
@@ -172,13 +172,13 @@ $> py main.py -f path/to/file.001 --node 4587520 --entries --table
 ```
 There is a flag that permits single entry output because there may occasionally be too many entries to view in the console.
 ```cmd
-$> py main.py -f path/to/file.001 --node 4587520 --entry 4 --raw
+$> py main.py -f path/to/file.001 --node 4587520 --entry 4 --json
 ```
 ```
 {'Entry size': 272, 'Key Offset': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Trash Stream', 'LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (1, 0), 'Page Reference': (4157, 0, 0, 0)}}
 ```
 ### Note
-- The --table and --raw flags are working for the following tables:
+- The --table and --json flags are working for the following tables:
     * `Object ID Table`
     * `Schema Table`
     * `Container Table`
