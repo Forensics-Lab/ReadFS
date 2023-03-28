@@ -4,10 +4,11 @@ from prettytable import PrettyTable
 from Managers.Bytes import Formater
 
 class IndexEntries:
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysCount:int, tableIdentifier, indexRootvariableComponent:bytes) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], keysCount:int, tableIdentifier, indexRootvariableComponent:bytes, clusterSize:int) -> None:
         self.formater = Formater()
         self.keysCont = keysCount
         self.byteArray = byteArray
+        self.clusterSize = clusterSize
         self.tableIdentifier = tableIdentifier
         self.indexRootvariableComponent = indexRootvariableComponent
 
@@ -44,15 +45,15 @@ class IndexEntries:
                               self.tableIdentifier: self.__tableSpecifficStruct(_bytes)}
         return entryGeneralHeader
 
-    def __tableSpecifficStruct(self, _bytes: bytes) -> Union[Container, ObjectID]:
+    def __tableSpecifficStruct(self, _bytes: bytes) -> Union[ObjectID, Schema, ParentChild, Container, Upcase, LogFile]:
         if self.tableIdentifier in ("Object ID", "Object ID (Dup.)"):
-            return ObjectID(_bytes[16:]).structure()
+            return ObjectID(_bytes[16:], self.clusterSize).structure()
         elif self.tableIdentifier in ("Schema", "Schema (Dup.)"):
             return Schema(_bytes[16:]).structure()
         elif self.tableIdentifier in "Parent Child":
             return ParentChild(_bytes[16:]).structure()
         elif self.tableIdentifier in ("Container", "Container (Dup.)"):
-            return Container(_bytes[16:]).structure()
+            return Container(_bytes[16:], self.clusterSize).structure()
         elif self.tableIdentifier in ("Upcase", "Upcase (Dup.)"):
             return Upcase(_bytes[16:]).structure()
         elif self.tableIdentifier in ("Logfile Information", "Logfile Information (Dup.)"):
@@ -64,7 +65,8 @@ class IndexEntries:
         for _ in range(self.keysCont):
             keySize = self.formater.toDecimal(self.byteArray[relativeOffset:relativeOffset+0x4])
             key = self.byteArray[relativeOffset:relativeOffset + keySize]
-            ent.append(self.__getKeyValueData(key))
+            if key:
+                ent.append(self.__getKeyValueData(key))
             relativeOffset += keySize
         return tuple(ent)
 

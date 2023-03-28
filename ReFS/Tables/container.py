@@ -2,8 +2,9 @@ from typing import Union
 from ReFS.Tables import Table
 
 class Container(Table):
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], clusterSize) -> None:
         super().__init__(byteArray)
+        self.clusterSize = clusterSize
 
     def containerNumber(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x0:0x4])
@@ -17,10 +18,12 @@ class Container(Table):
         return self.formater.toDecimal(self.byteArray[0x20:0x28])
 
     def containerLCN(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0xD0:0xD8])
+        if self.clusterSize == 65536: return self.formater.toDecimal(self.byteArray[0xD0:0xD8])
+        if self.clusterSize == 4096: return self.formater.toDecimal(self.byteArray[0x90:0x98])
 
     def clustersPerContainer(self) -> int:
-        return self.formater.toDecimal(self.byteArray[0xD8:0xE0])
+        if self.clusterSize == 65536: return self.formater.toDecimal(self.byteArray[0xD8:0xE0])
+        if self.clusterSize == 4096: return self.formater.toDecimal(self.byteArray[0x98:0xa0])
 
     def structure(self) -> dict:
         return {"Container":self.containerNumber(),

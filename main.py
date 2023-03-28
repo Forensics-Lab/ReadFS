@@ -26,9 +26,8 @@ entriesArgs.required = True if (parser.parse_args().entries or parser.parse_args
 
 args = parser.parse_args()
 
-EVIDENCE_FILE = Reader(args.file)
-
 def main():
+    EVIDENCE_FILE = Reader(args.file)
     bootSector = BootSector(EVIDENCE_FILE.getBytes(0x48))
     superblock = Superblock(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), bootSector.superBlockOffset()))
     checkpoint = Checkpoint(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), superblock.checkpointOffset()[0]))

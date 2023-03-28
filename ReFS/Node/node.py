@@ -22,7 +22,7 @@ class Node():
         return DataArea(self.byteArray[dataAreaStart:dataAreaEnd])
 
     def indexEntries(self) -> IndexEntries:
-        return IndexEntries(self.dataArea().byteArray, self.indexHeader().keyIndexEntries(), self.pageHeader.tableIdentifier(), self.indexRoot().variableComponent())
+        return IndexEntries(self.dataArea().byteArray, self.indexHeader().keyIndexEntries(), self.pageHeader.tableIdentifier(), self.indexRoot().variableComponent(), len(self.byteArray))
 
     def info(self) -> str:
         return f"{self.pageHeader.info()}\n"\

@@ -3,8 +3,9 @@ from ReFS.Tables import Table
 from ReFS.Page import PageDescriptor
 
 class ObjectID(Table):
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], clusterSize) -> None:
         super().__init__(byteArray)
+        self.clusterSize = clusterSize
 
     def id(self) -> str:
         return self.tableID(hex(self.formater.toDecimal(self.byteArray[0x8:0x10])))
@@ -25,7 +26,7 @@ class ObjectID(Table):
         return LSN0, LSN1
 
     def pageReference(self) -> tuple[int, int, int, int]:
-        return PageDescriptor(self.byteArray[0x30:0xD8]).LCNS()
+        return PageDescriptor(self.byteArray[0x30:0xD8], self.clusterSize).LCNS()
 
     def bufferData(self) -> bytearray:
         return self.byteArray[self.bufferOffset():self.bufferOffset() + self.bufferLength()]

@@ -119,4 +119,4 @@ class Checkpoint():
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
                f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()}\n"\
-               f"{PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()]).info()}"
+               f"{PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()], len(self.__byteArray)).info()}"
