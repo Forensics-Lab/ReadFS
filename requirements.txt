@@ -1,1 +1,3 @@
-prettytable==2.5.0
+prettytable
+customtkinter
+Pillow

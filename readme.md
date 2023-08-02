@@ -7,8 +7,43 @@ With that said, this project aims to fit the needs of a day-to-day user and help
 # Giving credit where credit is due
 
 This project wouldn't be possible or would be really hard to accomplish without the help of a paper written by Paul Prade, Tobias Groß, Andreas Dewald from Friedrich Alexander University
-Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> https://doi.org/10.25593/issn.2191-5008/CS-2019-05
+Erlangen-Nuremberg. Please feel free to go and read their amazing [paper](https://doi.org/10.25593/issn.2191-5008/CS-2019-05). 
 
+
+# After cloning the repo
+After cloning the repo you will need to install the dependencies. To do that you will need to run the following command:
+```cmd
+$> pip install -r requirements.txt
+```
+
+
+# GUI Usage
+As of now the GUI is still in development, and it's not ready for use. This means that there is currently no functionality tied to the GUI.
+The GUI is built using the [customtkinter](https://github.com/TomSchimansky/CustomTkinter) library, and it's prone to massive changes in the future.
+
+To run the gui you will need to run the following command:
+```cmd
+$> py readfs-gui.py
+```
+
+After running this command this window should pop up:
+![GUI](screenshots/menu_window.png)
+
+Clicking on the "New Case" button will open a new window where you will be able to create a new case. It is important to note
+that this action, in the future, will create a full environment for the case, including a database and a folder structure.
+![New Case](screenshots/new_case_window.png)
+
+Clicking on the "Quick Case" button will open a new window where you will be able to open a temporary case. This means that after
+closing the app, all the data will be lost. The idea behind this option is to allow the user to quickly parse a ReFS image without having to create a new case.
+![Quick Case](screenshots/quick_case_window.png)
+
+Clicking on the "Case Manager" button will open a new window where you will be able to manage all the cases that you have created. 
+This includes open, import, export and delete cases. As of now, for showcasing purposes only the "Import" and "Delete" buttons are working.
+Clicking any other buttons will reopen the menu window.
+![Case Manager](screenshots/case_manager_window.png)
+
+
+# CLI Usage
 # Current capabilities
 - The ability to correctly parse and output information from the following:
     - Boot sector
@@ -16,12 +51,10 @@ Erlangen-Nuremberg. Please feel free to go and read their amazing paper here -> 
     - Checkpoint
     - Nodes
 
-# Usage
-
 ## Bootsector
 To display general information about the forensic image you will need to pass the -ii or --image_info flags. See the example bellow:
 ```cmd
-$> py main.py -f path/to/file.001 -ii
+$> py readfs.py -f path/to/file.001 -ii
 ```
 ```
 <<=====================[Boot Sector]=====================>>
@@ -44,7 +77,7 @@ $> py main.py -f path/to/file.001 -ii
 The information stored in the Superblock structure can be extracted using the command bellow:
 
 ```cmd
-$> py main.py -f path/to/file.001 -bi superblock
+$> py readfs.py -f path/to/file.001 -bi superblock
 ```
 ```
 <<=====================[Page Header]=====================>>
@@ -78,7 +111,7 @@ $> py main.py -f path/to/file.001 -bi superblock
 ## Checkpoint
 The information stored in the Checkpoint can be extracted using the command bellow:
 ```cmd
-$> py main.py -f path/to/file.001 -bi checkpoint
+$> py readfs.py -f path/to/file.001 -bi checkpoint
 ```
 ```
 <<=====================[Page Header]=====================>>
@@ -126,7 +159,7 @@ $> py main.py -f path/to/file.001 -bi checkpoint
 ## Node
 General Node information can be displayed by passing the offset to a table found in the checkpoint. Let's take the Object ID Table pointer offset for example:
 ```cmd
-$> py main.py -f path/to/file.001 --node 4587520 --info
+$> py readfs.py -f path/to/file.001 --node 4587520 --info
 ```
 ```
 <<=====================[Page Header]=====================>>
@@ -157,7 +190,7 @@ $> py main.py -f path/to/file.001 --node 4587520 --info
 ```
 Every table found in the Checkpoint Block has entries/rows in them, those can be extracted by using the --entries flag and specify the output format (--table or --json):
 ```cmd
-$> py main.py -f path/to/file.001 --node 4587520 --entries --table
+$> py readfs.py -f path/to/file.001 --node 4587520 --entries --table
 ```
 ```
 +-----+------------+------------+----------+---------+--------------+------------+------------+--------------------------+------------+---------------+---------------+-------------+-----------------+
@@ -172,7 +205,7 @@ $> py main.py -f path/to/file.001 --node 4587520 --entries --table
 ```
 There is a flag that permits single entry output because there may occasionally be too many entries to view in the console.
 ```cmd
-$> py main.py -f path/to/file.001 --node 4587520 --entry 4 --json
+$> py readfs.py -f path/to/file.001 --node 4587520 --entry 4 --json
 ```
 ```
 {'Entry size': 272, 'Key Offset': 16, 'Key Size': 16, 'Flag': 'Not Set', 'Value Offset': 32, 'Value Size': 240, 'Object ID': {'ID': 'Trash Stream', 'LSN Offset': 24, 'Buffer Offset': 200, 'Buffer Length': 0, 'Durable LSN': (1, 0), 'Page Reference': (4157, 0, 0, 0)}}
