@@ -1,6 +1,9 @@
-import customtkinter as ctk
-from tkinter import IntVar
-from random import randint
+import customtkinter   as ctk
+from tkinter           import IntVar
+from random            import randint
+from datetime          import datetime
+from GUI.Managers.case import Case_Manager
+
 
 class Case_Manager_Window(ctk.CTkToplevel):
     def __init__(self, master):
@@ -23,9 +26,10 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.geometry(f"{self.window_width}x{self.window_height}+{x_offset}+{y_offset}")
 
         # VARIABLES
-        self.entries   = {}
-        self.radio_var = IntVar(value=0)
-        self.radio_btn_id = 0
+        self.radio_btn_id  = 0
+        self.entries       = {}
+        self.case_manager  = Case_Manager()
+        self.radio_var     = IntVar(value=0)
         self.entry_row_pos = len(self.entries)
 
         # FRAMES
@@ -52,10 +56,12 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.cancel_btn = ctk.CTkButton(self.master_frame, text="Cancel", font=("GOST Common", 17), command=self.cancel_btn_callback, height=35)
 
         # ADDING ENTRIES
-        self.add_entry(self.random_case_id(), "John Doe",  "01/02/2021", "03/03/2021")
-        self.add_entry(self.random_case_id(), "Doomdie",   "01/02/2021", "03/03/2021")
-        self.add_entry(self.random_case_id(), "Some Name", "01/02/2021", "03/03/2021")
-        self.add_entry(self.random_case_id(), "Some Other Name Horia", "01/02/2021", "03/03/2021")
+        cases = self.get_cases()
+        if cases:
+            for case in cases:
+                date_created = datetime.fromtimestamp(case['date_created']).strftime("%d/%m/%Y")
+                date_modified = datetime.fromtimestamp(case['date_modified']).strftime("%d/%m/%Y")
+                self.add_entry(case["case_id"], case['author'].replace('_', ' '), date_created, date_modified)
 
         # PLACING
         self.open_btn.place  (anchor="center", relx=0.150, rely=0.94)
@@ -103,7 +109,7 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.master.deiconify()
 
     def import_btn_callback(self):
-        self.add_entry(self.random_case_id(), "Some Trimmed name Horia", "01/02/2021", "03/03/2021")
+        self.cancel_btn_callback()
 
     def export_btn_callback(self):
         self.cancel_btn_callback()
@@ -119,12 +125,16 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.radio_btn_id += 1
         # Here will be the code to delete the entry from the database
 
-    def random_case_id(self):
-        # This function will need to be deleted
-        return str(randint(100, 999))
-
     def update_rows(self, entries):
         for row, entry in enumerate(entries.items()):
             for col, widget in enumerate(entry[1]):
                 widget.grid_forget()
                 widget.grid(row=row, column=col)
+
+    def get_cases(self):
+        cases_data = []
+        cases_dirs = self.case_manager.list()
+        for case in cases_dirs:
+            case_data = self.case_manager.get_case_metadata(case)
+            cases_data.append(case_data)
+        return cases_data

@@ -1,6 +1,8 @@
-from PIL import Image
-import tkinter       as tk
-import customtkinter as ctk
+import customtkinter    as ctk
+from PIL                import Image
+from GUI.Managers.case  import Case_Manager
+from tkinter            import IntVar, StringVar
+from tkinter.messagebox import showerror, showinfo
 
 class New_Case_Window(ctk.CTkToplevel):
     def __init__(self, master):
@@ -21,10 +23,13 @@ class New_Case_Window(ctk.CTkToplevel):
 
         self.frame = ctk.CTkFrame(self, width=self.window_width, height=self.window_height, corner_radius=0)
 
-        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/assets/imgs/loupe.png"), size=(20, 20))
+        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
 
         # VARIABLES
-        self.radio_var = tk.IntVar(value=0)
+        self.case_manager    = Case_Manager()
+        self.radio_var       = IntVar   (value=0)
+        self.default_case_no = StringVar(value="001")
+        self.default_name    = StringVar(value="John Doe")
 
         # LABELS
         self.case_no_label        = ctk.CTkLabel(self.frame, text="Case No.",      font=("GOST Common", 17))
@@ -33,9 +38,9 @@ class New_Case_Window(ctk.CTkToplevel):
         self.imagefile_type       = ctk.CTkLabel(self.frame, text="Image Type",    font=("GOST Common", 17))
 
         # ENTRIES
-        self.case_no_entry         = ctk.CTkEntry(self.frame, placeholder_text="001",      font=("GOST Common", 17), width=317)
-        self.case_author_entry     = ctk.CTkEntry(self.frame, placeholder_text="John Doe", font=("GOST Common", 17), width=317)
-        self.case_image_file_entry = ctk.CTkEntry(self.frame, placeholder_text="/",        font=("GOST Common", 17), width=276)
+        self.case_no_entry         = ctk.CTkEntry(self.frame, textvariable=self.default_case_no, font=("GOST Common", 17), width=317)
+        self.case_author_entry     = ctk.CTkEntry(self.frame, textvariable=self.default_name,    font=("GOST Common", 17), width=317)
+        self.case_image_file_entry = ctk.CTkEntry(self.frame, placeholder_text="/",              font=("GOST Common", 17), width=276)
 
         # BUTTONS
         self.case_imagefile_button = ctk.CTkButton(self.frame, text="", image=self.open_explorer_logo,  command=self.open_explorer,           width=30)
@@ -67,11 +72,18 @@ class New_Case_Window(ctk.CTkToplevel):
 
     def create_case(self):
         if self.case_image_file_entry.get() == "":
-            tk.messagebox.showerror("ReadFS - Error", "To create a case you must select an image file.")
-            return
-        tk.messagebox.showinfo("ReadFS - Success", "Case created successfully.")
-        self.destroy()
-        self.master.deiconify()
+            showerror("ReadFS - Error", "To create a case you must select an image file."); return
+        self.case_manager.create(self.case_no_entry.get(), self.case_author_entry.get(), self.case_image_file_entry.get())
+        if self.case_manager.status() == "SUCCESS":
+            showinfo("ReadFS - Success", "Case created successfully.")
+        elif self.case_manager.status() == "NOT_A_FILE":
+            showerror("ReadFS - Error", "A file needs to be selected."); return
+        elif self.case_manager.status() == "FILE_NOT_FOUND":
+            showerror("ReadFS - Error", "File doesn't exists."); return
+
+        # Close window and show main window
+        # This is just a temporary solution
+        self.cancel_button_callback()
 
     def cancel_button_callback(self):
         self.destroy()
