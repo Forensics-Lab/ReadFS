@@ -1,8 +1,9 @@
-import customtkinter   as ctk
-from tkinter import IntVar, StringVar
-from random            import randint
-from datetime          import datetime
-from GUI.Managers.case import Case_Manager
+import customtkinter            as ctk
+from datetime                   import datetime
+from tkinter.messagebox         import showerror
+from GUI.Managers.case          import Case_Manager
+from GUI.graphics.export_window import Export_Window
+from tkinter                    import IntVar, StringVar
 
 
 class Case_Manager_Window(ctk.CTkToplevel):
@@ -114,21 +115,29 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.cancel_btn_callback()
 
     def export_btn_callback(self):
-        self.cancel_btn_callback()
+        # This section may change in the future
+        if self.entries:
+            tmp = Export_Window(self.master, self.case_manager, self.case_directory.get())
+            tmp.mainloop()
+        elif not self.entries:
+            showerror("ReadFS - Error", "No cases to export")
 
     def delete_btn_callback(self):
+        if self.entries:
         # Delete the widget from the screen
-        entry_key = self.radio_var.get()
-        for widget in self.entries[entry_key]:
-            widget.destroy()
-        # Delete the entry from the entries dictionary
-        self.entries.pop(entry_key)
-        self.update_rows(self.entries)
-        self.radio_var.set(-1)
-        self.entry_row_pos -= 1
-        self.radio_btn_id += 1
-        # Here will be the code to delete the entry from the database
-        self.case_manager.delete(self.case_directory.get())
+            entry_key = self.radio_var.get()
+            for widget in self.entries[entry_key]:
+                widget.destroy()
+            # Delete the entry from the entries dictionary
+            self.entries.pop(entry_key)
+            self.update_rows(self.entries)
+            self.radio_var.set(-1)
+            self.entry_row_pos -= 1
+            self.radio_btn_id += 1
+            # Here will be the code to delete the entry from the database
+            self.case_manager.delete(self.case_directory.get())
+        else:
+            showerror("ReadFS - Error", "No case selected")
 
     def update_rows(self, entries):
         for row, entry in enumerate(entries.items()):

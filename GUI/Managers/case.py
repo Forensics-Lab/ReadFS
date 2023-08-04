@@ -1,7 +1,8 @@
+import shutil
 from shutil   import rmtree
 from datetime import datetime
 from json     import dumps, loads
-from os       import path, mkdir, listdir
+from os       import path, mkdir, listdir, rename, getcwd
 
 class Case_Manager:
     def __init__(self, ):
@@ -76,8 +77,16 @@ class Case_Manager:
     def close(self, name):
         ...
 
-    def export(self, name):
-        ...
+    def export(self, dir_to_export, export_path):
+        if export_path:
+            export_name = f"{path.basename(dir_to_export)}_export"
+            shutil.make_archive(export_name, "zip", dir_to_export)
+            src = path.join(getcwd(), f"{export_name}.zip")
+            dst = path.join(export_path, f"{export_name}.zip")
+            rename(src, dst)
+            self._case_status = "SUCCESS"
+        else:
+            self._case_status = "EXPORT_PATH_NOT_SPECIFIED"
 
     def import_(self, path):
         ...

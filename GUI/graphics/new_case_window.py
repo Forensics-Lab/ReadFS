@@ -23,9 +23,9 @@ class New_Case_Window(ctk.CTkToplevel):
 
         self.frame = ctk.CTkFrame(self, width=self.window_width, height=self.window_height, corner_radius=0)
 
-        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
 
         # VARIABLES
+        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
         self.case_manager    = Case_Manager()
         self.radio_var       = StringVar(value="Physical")
         self.default_case_no = StringVar(value="001"     )
