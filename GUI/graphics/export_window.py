@@ -60,6 +60,8 @@ class Export_Window(ctk.CTkToplevel):
             self.destroy()
         elif self.case_manager.status() == "EXPORT_PATH_NOT_SPECIFIED":
             showerror("ReadFS - Error", "Export path can not be empty!")
+        elif self.case_manager.status() == "EXPORT_PATH_ALREADY_EXISTS":
+            showerror("ReadFS - Error", "Case has already been exported to this path. Delete the old archive or choose another path!")
 
     def open_explorer(self):
         filepath = ctk.filedialog.askdirectory(initialdir=self.default_dir.get())

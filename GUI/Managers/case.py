@@ -2,7 +2,7 @@ import shutil
 from shutil   import rmtree
 from datetime import datetime
 from json     import dumps, loads
-from os       import path, mkdir, listdir, rename, getcwd
+from os       import path, mkdir, listdir, rename, getcwd, remove
 
 class Case_Manager:
     def __init__(self, ):
@@ -80,11 +80,15 @@ class Case_Manager:
     def export(self, dir_to_export, export_path):
         if export_path:
             export_name = f"{path.basename(dir_to_export)}_export"
-            shutil.make_archive(export_name, "zip", dir_to_export)
-            src = path.join(getcwd(), f"{export_name}.zip")
-            dst = path.join(export_path, f"{export_name}.zip")
-            rename(src, dst)
-            self._case_status = "SUCCESS"
+            try:
+                shutil.make_archive(export_name, "zip", dir_to_export)
+                src = path.join(getcwd(), f"{export_name}.zip")
+                dst = path.join(export_path, f"{export_name}.zip")
+                rename(src, dst)
+                self._case_status = "SUCCESS"
+            except FileExistsError:
+                remove(path.join(getcwd(), f"{export_name}.zip"))
+                self._case_status = "EXPORT_PATH_ALREADY_EXISTS"
         else:
             self._case_status = "EXPORT_PATH_NOT_SPECIFIED"
 
