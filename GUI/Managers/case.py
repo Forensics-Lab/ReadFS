@@ -1,6 +1,7 @@
-from os import path, mkdir, listdir
+from shutil   import rmtree
 from datetime import datetime
-from json import dumps, loads
+from json     import dumps, loads
+from os       import path, mkdir, listdir
 
 class Case_Manager:
     def __init__(self, ):
@@ -17,16 +18,18 @@ class Case_Manager:
         with open(path, "w") as f:
             f.write("")
 
-    def write_metadata(self, case_no, author, date_created, metadata_path):
+    def write_metadata(self, case_id, case_no, author, date_created, evidence_type, metadata_path):
         metadata_structure = self._metadata_structure()
-        metadata_structure["case_id"]       = case_no
+        metadata_structure["case_id"]       = case_id
+        metadata_structure["case_no"]       = case_no
         metadata_structure["author"]        = author
         metadata_structure["date_created"]  = date_created
         metadata_structure["date_modified"] = date_created
+        metadata_structure["evidence_type"] = evidence_type
         with open(metadata_path, "w") as f:
             f.write(dumps(metadata_structure, indent=4))
 
-    def create(self, case_no, author, evidence_path):
+    def create(self, case_no, author, evidence_path, evidence_type):
         # Check if the evidence path exists and is a file
         if not path.exists(evidence_path): self._case_status = "FILE_NOT_FOUND"; return
         if not path.isfile(evidence_path): self._case_status = "NOT_A_FILE";     return
@@ -47,7 +50,7 @@ class Case_Manager:
 
         # This file will be used to store the metadata about the case (e.g. case number, author, etc.)
         self.create_file(metadata_file)
-        self.write_metadata(case_no, author, self.date, metadata_file)
+        self.write_metadata(case_id, case_no, author, self.date, evidence_type, metadata_file)
 
         # Update the case status
         self._case_status = "SUCCESS"
@@ -60,8 +63,9 @@ class Case_Manager:
     def status(self):
         return self._case_status
 
-    def delete(self, name):
-        ...
+    def delete(self, case_id):
+        rmtree(path.join(self.root_folder(), case_id))
+        self._case_status = "SUCCESS"
 
     def list(self):
         return listdir(self.root_folder())

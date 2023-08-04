@@ -1,5 +1,5 @@
 import customtkinter   as ctk
-from tkinter           import IntVar
+from tkinter import IntVar, StringVar
 from random            import randint
 from datetime          import datetime
 from GUI.Managers.case import Case_Manager
@@ -26,11 +26,12 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.geometry(f"{self.window_width}x{self.window_height}+{x_offset}+{y_offset}")
 
         # VARIABLES
-        self.radio_btn_id  = 0
-        self.entries       = {}
-        self.case_manager  = Case_Manager()
-        self.radio_var     = IntVar(value=0)
-        self.entry_row_pos = len(self.entries)
+        self.radio_btn_id   = 0
+        self.entries        = {}
+        self.case_directory = StringVar()
+        self.case_manager   = Case_Manager()
+        self.radio_var      = IntVar(value=0)
+        self.entry_row_pos  = len(self.entries)
 
         # FRAMES
         self.master_frame = ctk.CTkFrame(self, width=self.window_width, height=self.window_height, corner_radius=0)
@@ -61,7 +62,7 @@ class Case_Manager_Window(ctk.CTkToplevel):
             for case in cases:
                 date_created = datetime.fromtimestamp(case['date_created']).strftime("%d/%m/%Y")
                 date_modified = datetime.fromtimestamp(case['date_modified']).strftime("%d/%m/%Y")
-                self.add_entry(case["case_id"], case['author'].replace('_', ' '), date_created, date_modified)
+                self.add_entry(case["case_id"], case["case_no"], case['author'].replace('_', ' '), date_created, date_modified)
 
         # PLACING
         self.open_btn.place  (anchor="center", relx=0.150, rely=0.94)
@@ -80,7 +81,7 @@ class Case_Manager_Window(ctk.CTkToplevel):
 
         self.scroll_window.place(anchor="center", relx=0.51, rely=0.5)
 
-    def add_entry(self, case_no, author, created, last_modified):
+    def add_entry(self, entry_id, case_no, author, created, last_modified):
         rbtn = ctk.CTkRadioButton(self.scroll_window, text='', bg_color='transparent', width=1, height=1, value=self.radio_btn_id, variable=self.radio_var)
         f1 =   ctk.CTkFrame   (self.scroll_window, width=self.window_width // 5, height=50, corner_radius=0, border_width=1)
         f2 =   ctk.CTkFrame   (self.scroll_window, width=self.window_width // 5, height=50, corner_radius=0, border_width=1)
@@ -97,6 +98,7 @@ class Case_Manager_Window(ctk.CTkToplevel):
         f2.grid  (row=self.entry_row_pos, column=2)
         f3.grid  (row=self.entry_row_pos, column=3)
         f4.grid  (row=self.entry_row_pos, column=4)
+        self.case_directory.set(entry_id)
         self.entries[self.radio_btn_id] = (rbtn, f1, f2, f3, f4)
         self.entry_row_pos += 1
         self.radio_btn_id += 1
@@ -115,15 +117,18 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.cancel_btn_callback()
 
     def delete_btn_callback(self):
+        # Delete the widget from the screen
         entry_key = self.radio_var.get()
         for widget in self.entries[entry_key]:
             widget.destroy()
+        # Delete the entry from the entries dictionary
         self.entries.pop(entry_key)
         self.update_rows(self.entries)
         self.radio_var.set(-1)
         self.entry_row_pos -= 1
         self.radio_btn_id += 1
         # Here will be the code to delete the entry from the database
+        self.case_manager.delete(self.case_directory.get())
 
     def update_rows(self, entries):
         for row, entry in enumerate(entries.items()):

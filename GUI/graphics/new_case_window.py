@@ -27,8 +27,8 @@ class New_Case_Window(ctk.CTkToplevel):
 
         # VARIABLES
         self.case_manager    = Case_Manager()
-        self.radio_var       = IntVar   (value=0)
-        self.default_case_no = StringVar(value="001")
+        self.radio_var       = StringVar(value="Physical")
+        self.default_case_no = StringVar(value="001"     )
         self.default_name    = StringVar(value="John Doe")
 
         # LABELS
@@ -48,8 +48,8 @@ class New_Case_Window(ctk.CTkToplevel):
         self.cancel_button         = ctk.CTkButton(self.frame, text="Cancel", font=("GOST Common", 17), command=self.cancel_button_callback, height=35)
 
         # RADIO BUTTONS
-        self.radio_button_1 = ctk.CTkRadioButton(self.frame, text="Logical",  variable=self.radio_var, value=1)
-        self.radio_button_2 = ctk.CTkRadioButton(self.frame, text="Physical", variable=self.radio_var, value=0)
+        self.radio_button_1 = ctk.CTkRadioButton(self.frame, text="Logical",  variable=self.radio_var, value="Logical")
+        self.radio_button_2 = ctk.CTkRadioButton(self.frame, text="Physical", variable=self.radio_var, value="Physical")
 
         # PLACING
         self.case_no_label.place       (anchor="w", relx=0.10, rely=0.20)
@@ -73,7 +73,7 @@ class New_Case_Window(ctk.CTkToplevel):
     def create_case(self):
         if self.case_image_file_entry.get() == "":
             showerror("ReadFS - Error", "To create a case you must select an image file."); return
-        self.case_manager.create(self.case_no_entry.get(), self.case_author_entry.get(), self.case_image_file_entry.get())
+        self.case_manager.create(self.case_no_entry.get(), self.case_author_entry.get(), self.case_image_file_entry.get(), self.radio_var.get())
         if self.case_manager.status() == "SUCCESS":
             showinfo("ReadFS - Success", "Case created successfully.")
         elif self.case_manager.status() == "NOT_A_FILE":
