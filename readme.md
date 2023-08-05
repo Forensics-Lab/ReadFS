@@ -43,7 +43,7 @@ For the time being, this option is not working.
 ![Quick Case](screenshots/quick_case_window.png)
 
 Clicking on the ```Case Manager``` button will open a new window where you will be able to manage all the cases that you have created. 
-This includes open, import, export and delete cases. As of now only the ```Delete``` option is working, all the other options
+This includes `Open`, `Import`, `Export` and `Delete` cases. As of now only the `Delete`, `Export` and `Import` options are working, all the other options
 return to the main menu.
 
 ![Case Manager](screenshots/case_manager_window.png)
