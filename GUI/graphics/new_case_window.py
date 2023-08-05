@@ -1,8 +1,9 @@
 import customtkinter    as ctk
 from PIL                import Image
+from tkinter            import StringVar
 from GUI.Managers.case  import Case_Manager
-from tkinter            import IntVar, StringVar
 from tkinter.messagebox import showerror, showinfo
+
 
 class New_Case_Window(ctk.CTkToplevel):
     def __init__(self, master):
@@ -81,8 +82,9 @@ class New_Case_Window(ctk.CTkToplevel):
         elif self.case_manager.status() == "FILE_NOT_FOUND":
             showerror("ReadFS - Error", "File doesn't exists."); return
 
-        # Close window and show main window
+        # Close window and show menu window
         # This is just a temporary solution
+        # In the future this will need to open the main app window and not return to menu window
         self.cancel_button_callback()
 
     def cancel_button_callback(self):

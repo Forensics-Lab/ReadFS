@@ -1,8 +1,9 @@
-import customtkinter as ctk
-from os              import path
-from PIL             import Image
-from tkinter         import StringVar
+import customtkinter    as ctk
+from os                 import path
+from PIL                import Image
+from tkinter            import StringVar
 from tkinter.messagebox import showerror, showinfo
+
 
 class Export_Window(ctk.CTkToplevel):
     def __init__(self, master, case_manage, dir_to_export):
@@ -62,6 +63,7 @@ class Export_Window(ctk.CTkToplevel):
             showerror("ReadFS - Error", "Export path can not be empty!")
         elif self.case_manager.status() == "EXPORT_PATH_ALREADY_EXISTS":
             showerror("ReadFS - Error", "Case has already been exported to this path. Delete the old archive or choose another path!")
+        self.case_manager.reset_status()
 
     def open_explorer(self):
         filepath = ctk.filedialog.askdirectory(initialdir=self.default_dir.get())
