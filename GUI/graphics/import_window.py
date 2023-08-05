@@ -24,7 +24,7 @@ class Import_Window(ctk.CTkToplevel):
 
         # Set the window's title
         self.resizable(False, False)
-        self.title("ReadFS - Export")
+        self.title("ReadFS - Import")
         self.geometry(f"{self.window_width}x{self.window_height}+{x_offset}+{y_offset}")
 
         # VARIABLES
