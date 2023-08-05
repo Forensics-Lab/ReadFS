@@ -2,6 +2,7 @@ import customtkinter            as ctk
 from datetime                   import datetime
 from tkinter.messagebox         import showerror
 from GUI.Managers.case          import Case_Manager
+from GUI.graphics.import_window import Import_Window
 from GUI.graphics.export_window import Export_Window
 from tkinter                    import IntVar, StringVar
 
@@ -27,12 +28,12 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.geometry(f"{self.window_width}x{self.window_height}+{x_offset}+{y_offset}")
 
         # VARIABLES
-        self.radio_btn_id   = 0
-        self.entries        = {}
-        self.case_directory = StringVar()
-        self.case_manager   = Case_Manager()
-        self.radio_var      = IntVar(value=0)
-        self.entry_row_pos  = len(self.entries)
+        self.radio_btn_id     = 0
+        self.entries          = {}
+        self.case_directories = {}
+        self.case_manager     = Case_Manager()
+        self.radio_var        = IntVar(value=0)
+        self.entry_row_pos    = len(self.entries)
 
         # FRAMES
         self.master_frame = ctk.CTkFrame(self, width=self.window_width, height=self.window_height, corner_radius=0)
@@ -99,8 +100,8 @@ class Case_Manager_Window(ctk.CTkToplevel):
         f2.grid  (row=self.entry_row_pos, column=2)
         f3.grid  (row=self.entry_row_pos, column=3)
         f4.grid  (row=self.entry_row_pos, column=4)
-        self.case_directory.set(entry_id)
-        self.entries[self.radio_btn_id] = (rbtn, f1, f2, f3, f4)
+        self.case_directories[self.radio_btn_id] = StringVar(value=entry_id)
+        self.entries[self.radio_btn_id] = [rbtn, f1, f2, f3, f4]
         self.entry_row_pos += 1
         self.radio_btn_id += 1
 
@@ -112,19 +113,21 @@ class Case_Manager_Window(ctk.CTkToplevel):
         self.master.deiconify()
 
     def import_btn_callback(self):
-        self.cancel_btn_callback()
+        tmp = Import_Window(self.master, self, self.case_manager)
+        tmp.mainloop()
 
     def export_btn_callback(self):
         # This section may change in the future
         if self.entries:
-            tmp = Export_Window(self.master, self.case_manager, self.case_directory.get())
+            entry_key = self.radio_var.get()
+            tmp = Export_Window(self.master, self.case_manager, self.case_directories[entry_key].get())
             tmp.mainloop()
         elif not self.entries:
             showerror("ReadFS - Error", "No cases to export")
 
     def delete_btn_callback(self):
         if self.entries:
-        # Delete the widget from the screen
+            # Delete the widget from the screen
             entry_key = self.radio_var.get()
             for widget in self.entries[entry_key]:
                 widget.destroy()
@@ -134,8 +137,10 @@ class Case_Manager_Window(ctk.CTkToplevel):
             self.radio_var.set(-1)
             self.entry_row_pos -= 1
             self.radio_btn_id += 1
-            # Here will be the code to delete the entry from the database
-            self.case_manager.delete(self.case_directory.get())
+
+            # Delete the case from disk
+            self.case_manager.delete(self.case_directories[entry_key].get())
+            self.case_directories.pop(entry_key)
         else:
             showerror("ReadFS - Error", "No case selected")
 
