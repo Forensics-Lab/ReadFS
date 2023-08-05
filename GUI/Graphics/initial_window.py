@@ -1,8 +1,8 @@
 import ctypes
-import customtkinter         as ctk
-from GUI.graphics.new_case_window import New_Case_Window
-from GUI.graphics.quick_open_window import Quick_Open_Window
-from GUI.graphics.case_manager_window import Case_Manager_Window
+import customtkinter                  as ctk
+from GUI.Graphics.new_case_window     import New_Case_Window
+from GUI.Graphics.quick_open_window   import Quick_Open_Window
+from GUI.Graphics.case_manager_window import Case_Manager_Window
 
 class MenuWindow(ctk.CTk):
     def __init__(self):

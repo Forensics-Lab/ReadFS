@@ -30,7 +30,7 @@ class Export_Window(ctk.CTkToplevel):
         self.case_manager       = case_manage
         self.dir_to_export      = path.abspath(f"data/cases/{dir_to_export}")
         self.default_dir        = StringVar(value = path.abspath("data/exports"))
-        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
+        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/Graphics/assets/imgs/loupe.png"), size=(20, 20))
 
         # LABELS
         self.ctk_label1 = ctk.CTkLabel(self, text=f"Output Directory", font=("GOST Common", 17))

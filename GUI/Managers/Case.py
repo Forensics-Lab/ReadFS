@@ -3,7 +3,7 @@ import zipfile
 from shutil   import rmtree
 from datetime import datetime
 from json     import dumps, loads
-from os       import path, mkdir, listdir, remove, walk
+from os       import path, mkdir, listdir, walk
 
 
 class Case_Manager:

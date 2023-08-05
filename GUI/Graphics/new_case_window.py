@@ -1,7 +1,7 @@
 import customtkinter    as ctk
 from PIL                import Image
 from tkinter            import StringVar
-from GUI.Managers.case  import Case_Manager
+from GUI.Managers.Case  import Case_Manager
 from tkinter.messagebox import showerror, showinfo
 
 
@@ -26,7 +26,7 @@ class New_Case_Window(ctk.CTkToplevel):
 
 
         # VARIABLES
-        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
+        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/Graphics/assets/imgs/loupe.png"), size=(20, 20))
         self.case_manager    = Case_Manager()
         self.radio_var       = StringVar(value="Physical")
         self.default_case_no = StringVar(value="001"     )

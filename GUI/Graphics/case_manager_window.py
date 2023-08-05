@@ -1,9 +1,9 @@
 import customtkinter            as ctk
 from datetime                   import datetime
 from tkinter.messagebox         import showerror
-from GUI.Managers.case          import Case_Manager
-from GUI.graphics.import_window import Import_Window
-from GUI.graphics.export_window import Export_Window
+from GUI.Managers.Case          import Case_Manager
+from GUI.Graphics.import_window import Import_Window
+from GUI.Graphics.export_window import Export_Window
 from tkinter                    import IntVar, StringVar
 
 

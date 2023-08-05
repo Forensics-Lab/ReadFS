@@ -31,7 +31,7 @@ class Import_Window(ctk.CTkToplevel):
         self.case_manager        = case_manage
         self.password            = StringVar(value="ReadFS")
         self.default_import_path = StringVar(value=path.abspath(getcwd()))
-        self.open_explorer_logo  = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
+        self.open_explorer_logo  = ctk.CTkImage(Image.open("GUI/Graphics/assets/imgs/loupe.png"), size=(20, 20))
 
         # LABELS
         self.ctk_label1 = ctk.CTkLabel(self, text=f"Output Directory", font=("GOST Common", 17))

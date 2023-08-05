@@ -1,6 +1,6 @@
-from PIL import Image
-import customtkinter as ctk
 import tkinter       as tk
+import customtkinter as ctk
+from PIL             import Image
 
 class Quick_Open_Window(ctk.CTkToplevel):
     def __init__(self, master):
@@ -23,7 +23,7 @@ class Quick_Open_Window(ctk.CTkToplevel):
         self.radio_var = tk.IntVar()
 
         # IMAGES
-        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/graphics/assets/imgs/loupe.png"), size=(20, 20))
+        self.open_explorer_logo = ctk.CTkImage(Image.open("GUI/Graphics/assets/imgs/loupe.png"), size=(20, 20))
 
         # FRAMES
         self.frame = ctk.CTkFrame(self, width=self.window_width, height=self.window_height, corner_radius=0)
