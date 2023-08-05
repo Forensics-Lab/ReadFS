@@ -108,35 +108,28 @@ class Case_Manager:
         ...
 
     def export(self, dir_to_export, export_path, export_password):
-        if export_path:
-            export_path = path.join(export_path, f"{path.basename(dir_to_export)}_export.zip")
-            try:
-                # Zip and sign the file
-                self._zip_folder(dir_to_export, export_path, export_password)
-                self._sign_export_zip(export_path)
-                self._case_status = "SUCCESS"
-            except FileNotFoundError:
-                self._case_status = "INVALID_EXPORT_PATH"
-            except RuntimeError:
-                self._case_status = "PASSWORD_NOT_PROVIDED"
-        else:
-            self._case_status = "EMPTY_EXPORT_PATH"
+        if not export_path: self._case_status = "EMPTY_EXPORT_PATH"; return
+        export_path = path.join(export_path, f"{path.basename(dir_to_export)}_export.zip")
+        try:
+            # Zip and sign the file
+            self._zip_folder(dir_to_export, export_path, export_password)
+            self._sign_export_zip(export_path)
+            self._case_status = "SUCCESS"
+        except FileNotFoundError:
+            self._case_status = "INVALID_EXPORT_PATH"
+        except RuntimeError:
+            self._case_status = "PASSWORD_NOT_PROVIDED"
 
     def import_(self, path_to_zip, password):
         # Check if path is not empty
-        if path_to_zip:
-            try:
-                # Check if zip file is a ReadFS export case
-                is_valid = self._check_zip_sig(path_to_zip)
-                if is_valid:
-                    output_folder = path.join(self.root_folder(), path.basename(path_to_zip)[:-11])
-                    self._unzip_folder(path_to_zip, output_folder, password)
-                    self._case_status = "SUCCESS"
-                elif not is_valid:
-                    self._case_status = "BAD_IMPORT_FILE"
-            except FileNotFoundError:
-                self._case_status = "IMPORT_FILE_NOT_FOUND"
-            except RuntimeError:
-                self._case_status = "INVALID_PASSWORD"
-        elif not path_to_zip:
-            self._case_status = "EMPTY_IMPORT_PATH"
+        if not path_to_zip: self._case_status = "EMPTY_IMPORT_PATH"; return
+        try:
+            # Check if zip file is a ReadFS export case
+            if not self._check_zip_sig(path_to_zip): self._case_status = "BAD_IMPORT_FILE"; return
+            output_folder = path.join(self.root_folder(), path.basename(path_to_zip)[:-11])
+            self._unzip_folder(path_to_zip, output_folder, password)
+            self._case_status = "SUCCESS"
+        except FileNotFoundError:
+            self._case_status = "IMPORT_FILE_NOT_FOUND"
+        except RuntimeError:
+            self._case_status = "INVALID_PASSWORD"
