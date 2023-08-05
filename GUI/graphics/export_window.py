@@ -64,10 +64,12 @@ class Export_Window(ctk.CTkToplevel):
         if self.case_manager.status() == "SUCCESS":
             showinfo("ReadFS - Export", "Case has been exported successfully!")
             self.destroy()
-        elif self.case_manager.status() == "EXPORT_PATH_NOT_SPECIFIED":
-            showerror("ReadFS - Error", "Export path can not be empty!")
-        elif self.case_manager.status() == "EXPORT_PATH_ALREADY_EXISTS":
-            showerror("ReadFS - Error", "Case has already been exported to this path. Delete the old archive or choose another path!")
+        elif self.case_manager.status() == "INVALID_EXPORT_PATH":
+            showerror("ReadFS - Error", "Invalid export path!")
+        elif self.case_manager.status() == "EMPTY_EXPORT_PATH":
+            showerror("ReadFS - Error", "Export path cannot be empty!")
+        elif self.case_manager.status() == "PASSWORD_NOT_PROVIDED":
+            showerror("ReadFS - Error", "Password cannot be empty!")
         self.case_manager.reset_status()
 
     def open_explorer(self):

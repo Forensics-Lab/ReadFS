@@ -115,11 +115,12 @@ class Case_Manager:
                 self._zip_folder(dir_to_export, export_path, export_password)
                 self._sign_export_zip(export_path)
                 self._case_status = "SUCCESS"
-            except FileExistsError:
-                remove(export_path)
-                self._case_status = "EXPORT_PATH_ALREADY_EXISTS"
+            except FileNotFoundError:
+                self._case_status = "INVALID_EXPORT_PATH"
+            except RuntimeError:
+                self._case_status = "PASSWORD_NOT_PROVIDED"
         else:
-            self._case_status = "EXPORT_PATH_WINDOW_CLOSED"
+            self._case_status = "EMPTY_EXPORT_PATH"
 
     def import_(self, path_to_zip, password):
         # Check if path is not empty
