@@ -30,26 +30,30 @@ After running this command this window should pop up:
 
 ![GUI](screenshots/menu_window.png)
 
-Clicking on the ```New Case``` button will open a new window where you will be able to create a new case.
-The  ```Case No.``` and ```Examiner``` fields do not need to be filled in order to create a new case,
+Clicking on the `New Case` button will open a new window where you will be able to create a new case.
+The  `Case No.` and `Examiner` fields do not need to be filled in order to create a new case,
 but it's recommended to fill them in order to keep track of the cases that you have created.
 
 ![New Case](screenshots/new_case_window.png)
 
-Clicking on the ```Quick Case``` button will open a new window where you will be able to open a temporary case. This means that after
+Clicking on the `Quick Case` button will open a new window where you will be able to open a temporary case. This means that after
 closing the app, all the data will be lost. The idea behind this option is to allow the user to quickly parse a ReFS image without having to create a new case.
 For the time being, this option is not working.
 
 ![Quick Case](screenshots/quick_case_window.png)
 
-Clicking on the ```Case Manager``` button will open a new window where you will be able to manage all the cases that you have created. 
+Clicking on the `Case Manager` button will open a new window where you will be able to manage all the cases that you have created. 
 This includes `Open`, `Import`, `Export` and `Delete` cases. As of now only the `Delete`, `Export` and `Import` options are working, all the other options
 return to the main menu.
 
 ![Case Manager](screenshots/case_manager_window.png)
 
+It is important to note that while `exporting` and `importing` a case the user can specify a password.
+This password will be used to encrypt the zip file of the case. By default, the password is set to `ReadFS`, but this
+can be changed by the user.
+
 # CLI Usage
-# Current capabilities
+## Current capabilities
 - The ability to correctly parse and output information from the following:
     - Boot sector
     - Superblock
