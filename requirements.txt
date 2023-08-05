@@ -1,3 +1,4 @@
+Pillow
+pyzipper
 prettytable
 customtkinter
-Pillow
