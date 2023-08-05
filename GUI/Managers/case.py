@@ -1,8 +1,9 @@
-import shutil
+import pyzipper
+import zipfile
 from shutil   import rmtree
 from datetime import datetime
 from json     import dumps, loads
-from os       import path, mkdir, listdir, rename, getcwd, remove
+from os       import path, mkdir, listdir, remove, walk
 
 
 class Case_Manager:
@@ -25,6 +26,21 @@ class Case_Manager:
         with open(path_to_zip, 'rb') as zip_file:
             zip_file.seek(-10, 2)
             return zip_file.read() == b"abcdefghij"
+
+    def _zip_folder(self, folder_path, output_path, password):
+        with pyzipper.AESZipFile(output_path, 'w', compression=zipfile.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zf:
+            zf.setpassword(password.encode())  # Convert password to bytes
+
+            for foldername, subfolders, filenames in walk(folder_path):
+                for filename in filenames:
+                    file_path = path.join(foldername, filename)
+                    arcname = path.relpath(file_path, folder_path)  # Preserve folder structure in zip
+                    zf.write(file_path, arcname)
+
+    def _unzip_folder(self, zip_path, output_folder, password):
+        with pyzipper.AESZipFile(zip_path, 'r') as zf:
+            zf.setpassword(password.encode())  # Convert password to bytes
+            zf.extractall(output_folder)
 
     def root_folder(self):
         return path.abspath("data/cases/")
@@ -91,41 +107,35 @@ class Case_Manager:
     def open(self, name):
         ...
 
-    def export(self, dir_to_export, export_path):
+    def export(self, dir_to_export, export_path, export_password):
         if export_path:
-            export_name = f"{path.basename(dir_to_export)}_export"
+            export_path = path.join(export_path, f"{path.basename(dir_to_export)}_export.zip")
             try:
-                shutil.make_archive(export_name, "zip", dir_to_export)
-                src = path.join(getcwd(), f"{export_name}.zip")
-                dst = path.join(export_path, f"{export_name}.zip")
-
-                # Sign the zip file
-                self._sign_export_zip(src)
-
-                # Move the zip file to the export path
-                rename(src, dst)
-
+                # Zip and sign the file
+                self._zip_folder(dir_to_export, export_path, export_password)
+                self._sign_export_zip(export_path)
                 self._case_status = "SUCCESS"
             except FileExistsError:
-                remove(path.join(getcwd(), f"{export_name}.zip"))
+                remove(export_path)
                 self._case_status = "EXPORT_PATH_ALREADY_EXISTS"
         else:
             self._case_status = "EXPORT_PATH_WINDOW_CLOSED"
 
-    def import_(self, path_to_zip):
+    def import_(self, path_to_zip, password):
         # Check if path is not empty
         if path_to_zip:
             try:
                 # Check if zip file is a ReadFS export case
                 is_valid = self._check_zip_sig(path_to_zip)
                 if is_valid:
-                    src = path_to_zip
-                    dst = path.join(self.root_folder(), path.basename(path_to_zip))
-                    shutil.unpack_archive(src, dst[:-11], "zip")
+                    output_folder = path.join(self.root_folder(), path.basename(path_to_zip)[:-11])
+                    self._unzip_folder(path_to_zip, output_folder, password)
                     self._case_status = "SUCCESS"
                 elif not is_valid:
                     self._case_status = "BAD_IMPORT_FILE"
             except FileNotFoundError:
                 self._case_status = "IMPORT_FILE_NOT_FOUND"
+            except RuntimeError:
+                self._case_status = "INVALID_PASSWORD"
         elif not path_to_zip:
             self._case_status = "EMPTY_IMPORT_PATH"

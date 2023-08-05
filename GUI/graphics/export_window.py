@@ -26,6 +26,7 @@ class Export_Window(ctk.CTkToplevel):
         self.geometry(f"{self.window_width}x{self.window_height}+{x_offset}+{y_offset}")
 
         # VARIABLES
+        self.password           = StringVar(value="ReadFS")
         self.case_manager       = case_manage
         self.dir_to_export      = path.abspath(f"data/cases/{dir_to_export}")
         self.default_dir        = StringVar(value = path.abspath("data/exports"))
@@ -33,9 +34,11 @@ class Export_Window(ctk.CTkToplevel):
 
         # LABELS
         self.ctk_label1 = ctk.CTkLabel(self, text=f"Output Directory", font=("GOST Common", 17))
+        self.ctk_label2 = ctk.CTkLabel(self, text=f"Password",         font=("GOST Common", 17))
 
         # ENTRIES
-        self.ctk_entry1 = ctk.CTkEntry(self, textvariable=self.default_dir, width=319, font=("GOST Common", 17))
+        self.export_path = ctk.CTkEntry(self, textvariable=self.default_dir,        width=319, font=("GOST Common", 17))
+        self.password    = ctk.CTkEntry(self, textvariable=self.password, show="*", width=319, font=("GOST Common", 17))
 
         # BUTTONS
         self.export_dir_button = ctk.CTkButton(self, text="", image=self.open_explorer_logo,  command=self.open_explorer,        width=30)
@@ -43,19 +46,21 @@ class Export_Window(ctk.CTkToplevel):
         self.cancel_btn        = ctk.CTkButton(self, text="Cancel", font=("GOST Common", 17), command=self.cancel_btn_callback, height=35)
 
         # PLACING
-        self.ctk_label1.place       (relx=0.17, rely=0.4, anchor="center")
-        self.ctk_entry1.place       (relx=0.57, rely=0.4, anchor="center")
-        self.export_dir_button.place(relx=0.9, rely=0.4, anchor="center" )
+        self.ctk_label1.place       (relx=0.17, rely=0.28, anchor="center")
+        self.export_path.place      (relx=0.57, rely=0.28, anchor="center")
+        self.export_dir_button.place(relx=0.90, rely=0.28, anchor="center")
+
+        self.ctk_label2.place(relx=0.129, rely=0.53, anchor="center")
+        self.password.place  (relx=0.570, rely=0.53, anchor="center")
 
         self.export_btn.place(relx=0.2, rely=0.85, anchor="center")
         self.cancel_btn.place(relx=0.8, rely=0.85, anchor="center")
-
 
     def cancel_btn_callback(self):
         self.destroy()
 
     def export_btn_callback(self):
-        self.case_manager.export(self.dir_to_export, self.ctk_entry1.get())
+        self.case_manager.export(self.dir_to_export, self.export_path.get(), self.password.get())
         if self.case_manager.status() == "SUCCESS":
             showinfo("ReadFS - Export", "Case has been exported successfully!")
             self.destroy()
@@ -68,5 +73,5 @@ class Export_Window(ctk.CTkToplevel):
     def open_explorer(self):
         filepath = ctk.filedialog.askdirectory(initialdir=self.default_dir.get())
         if filepath:
-            self.ctk_entry1.delete(0, "end")
-            self.ctk_entry1.insert(0, filepath)
+            self.export_path.delete(0, "end")
+            self.export_path.insert(0, filepath)
