@@ -126,23 +126,22 @@ class Case_Manager_Window(ctk.CTkToplevel):
             showerror("ReadFS - Error", "No cases to export")
 
     def delete_btn_callback(self):
-        if self.entries:
-            # Delete the widget from the screen
-            entry_key = self.radio_var.get()
-            for widget in self.entries[entry_key]:
-                widget.destroy()
-            # Delete the entry from the entries dictionary
-            self.entries.pop(entry_key)
-            self.update_rows(self.entries)
-            self.radio_var.set(-1)
-            self.entry_row_pos -= 1
-            self.radio_btn_id += 1
+        if not self.entries:           showerror("ReadFS - Error", "No case to delete."); return
+        if self.radio_var.get() == -1: showerror("ReadFS - Error", "No case selected." ); return
+        # Delete the widget from the screen
+        entry_key = self.radio_var.get()
+        for widget in self.entries[entry_key]:
+            widget.destroy()
+        # Delete the entry from the entries dictionary
+        self.entries.pop(entry_key)
+        self.update_rows(self.entries)
+        self.radio_var.set(-1)
+        self.entry_row_pos -= 1
+        self.radio_btn_id += 1
 
-            # Delete the case from disk
-            self.case_manager.delete(self.case_directories[entry_key].get())
-            self.case_directories.pop(entry_key)
-        else:
-            showerror("ReadFS - Error", "No case selected")
+        # Delete the case from disk
+        self.case_manager.delete(self.case_directories[entry_key].get())
+        self.case_directories.pop(entry_key)
 
     def update_rows(self, entries):
         for row, entry in enumerate(entries.items()):
