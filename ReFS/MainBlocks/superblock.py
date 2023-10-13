@@ -15,7 +15,7 @@ class Superblock():
     def version(self) -> int:
         return self.suStruct[5]
 
-    def checkpointOffset(self) -> tuple[int, int]:
+    def checkpointOffset(self) -> Tuple[int, int]:
         checkpointRelativeOffset = self.suStruct[6]
         chk1 = self.formater.toDecimal(self.__byteArray[checkpointRelativeOffset:checkpointRelativeOffset+0x08]) * self.clusterSize
         chk2 = self.formater.toDecimal(self.__byteArray[checkpointRelativeOffset+0x08:checkpointRelativeOffset+0x10]) * self.clusterSize

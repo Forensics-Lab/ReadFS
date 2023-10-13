@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, Tuple, List, Set
 from ReFS.Tables import Table
 
 class Schema(Table):
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray:Union[List[bytes], Tuple[bytes], Set[bytes]]) -> None:
         super().__init__(byteArray)
 
     def id(self) -> str:

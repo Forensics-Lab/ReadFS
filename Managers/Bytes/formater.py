@@ -1,3 +1,4 @@
+from typing import Tuple
 
 class Formater:
     def toDecimal(self, _bytes: bytes, order: str = "little") -> int:
@@ -14,5 +15,5 @@ class Formater:
     def toHex(self, _bytes: bytes) -> str:
         return self.reverseBytes(_bytes).hex().upper()
 
-    def removeEmptyEntries(self, tup: tuple[bytes]):
+    def removeEmptyEntries(self, tup: Tuple[bytes]):
         return tuple(filter(lambda b: b != b'', tup))
