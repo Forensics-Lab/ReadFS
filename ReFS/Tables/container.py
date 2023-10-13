@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, Tuple, List, Set
 from ReFS.Tables import Table
 
 class Container(Table):
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], clusterSize) -> None:
+    def __init__(self, byteArray:Union[List[bytes], Tuple[bytes], Set[bytes]], clusterSize) -> None:
         super().__init__(byteArray)
         self.clusterSize = clusterSize
 

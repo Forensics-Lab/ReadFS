@@ -1,9 +1,9 @@
-from typing import Union
+from typing import Union, Tuple, List, Set
 from ReFS.Tables import Table
 from ReFS.Page import PageDescriptor
 
 class ObjectID(Table):
-    def __init__(self, byteArray:Union[list[bytes], tuple[bytes], set[bytes]], clusterSize) -> None:
+    def __init__(self, byteArray:Union[List[bytes], Tuple[bytes], Set[bytes]], clusterSize) -> None:
         super().__init__(byteArray)
         self.clusterSize = clusterSize
 
@@ -19,13 +19,13 @@ class ObjectID(Table):
     def bufferLength(self) -> int:
         return self.formater.toDecimal(self.byteArray[0x24:0x28])
 
-    def durableLSN(self) -> tuple[int, int]:
+    def durableLSN(self) -> Tuple[int, int]:
         LSN = self.byteArray[0x28:0x30]
         LSN0 = self.formater.toDecimal(LSN[0x0:0x4])
         LSN1 = self.formater.toDecimal(LSN[0x4:0x8])
         return LSN0, LSN1
 
-    def pageReference(self) -> tuple[int, int, int, int]:
+    def pageReference(self) -> Tuple[int, int, int, int]:
         return PageDescriptor(self.byteArray[0x30:0xD8], self.clusterSize).LCNS()
 
     def bufferData(self) -> bytearray:

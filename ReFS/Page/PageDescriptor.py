@@ -1,14 +1,14 @@
-from typing import Union
+from typing import Union, Tuple, List, Set
 from struct import unpack
 from Managers.Bytes import Formater
 
 class PageDescriptor:
-    def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]], clusterSize) -> None:
+    def __init__(self, byteArray: Union[List[bytes], Tuple[bytes], Set[bytes]], clusterSize) -> None:
         self.formater = Formater()
         byteOffset, byteRange = (8, 0x30) if clusterSize == 65536 else (4, 0x2C)
         self.pdStruct = self.formater.removeEmptyEntries(unpack(f"<4qh2bh2p{byteOffset}s", byteArray[:byteRange]))
 
-    def LCNS(self) -> tuple[int, int, int, int]:
+    def LCNS(self) -> Tuple[int, int, int, int]:
         return self.pdStruct[:4]
 
     def checksumType(self) -> str:
