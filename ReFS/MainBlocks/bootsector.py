@@ -3,7 +3,7 @@ from Managers.Bytes import Formater
 
 
 ''' https://learn.microsoft.com/windows/win32/fileio/computing-a-file-system-recognition-checksum '''
-class FSCheckSum():
+class FSChecksum():
     def __init__(self, data: bytes):
         self._checksum = 0
         for value in data:
@@ -17,7 +17,7 @@ class BootSector():
     def __init__(self, _bytes: bytes) -> None:
         self.formater = Formater()
         self.bStruct = unpack("<3s8s5s4sh2sq2i2b6s8s8sq", _bytes[:0x48])
-        self.chksum = self.formater.toHex(FSCheckSum(_bytes[3:22] + _bytes[24:]).checksum())
+        self.chksum = self.formater.toHex(FSChecksum(_bytes[3:22] + _bytes[24:]).checksum())
 
     def assemblyCode(self) -> str:
         return self.bStruct[0]
