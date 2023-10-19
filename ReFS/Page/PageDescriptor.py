@@ -2,6 +2,40 @@ from typing import Union, Tuple, List, Set
 from struct import unpack
 from Managers.Bytes import Formater
 
+
+class PageVerifySelfChecksum:
+    class checksum_type: CRC32C = 1; CRC64_ECMA_182 = 2
+
+    def __init__(self, data: bytes, type=checksum_type.CRC32C):
+        from crc import Calculator, Configuration
+
+        CRC32C = Configuration(
+            width=32,
+            polynomial=0x1EDC6F41,
+            init_value=0xFFFFFFFF,
+            final_xor_value=0xFFFFFFFF,
+            reverse_input=True,
+            reverse_output=True,
+        )
+
+        CRC64_ECMA_182 = Configuration(
+            width=64,
+            polynomial=0x9A6C9329AC4BC9B5,
+            init_value=0x0000000000000000,
+            final_xor_value=0x0000000000000000,
+            reverse_input=False,
+            reverse_output=False,
+        )
+
+        self.__crcCfg = CRC32C if (type == 1) else CRC64_ECMA_182
+
+        self.calculator = Calculator(self.__crcCfg)
+
+        self._checksum = self.calculator.checksum(data)
+
+    def checksum(self): return self._checksum.to_bytes(length=int(self.__crcCfg.width / 8), byteorder='little')
+
+
 class PageDescriptor:
     def __init__(self, byteArray: Union[List[bytes], Tuple[bytes], Set[bytes]], clusterSize) -> None:
         self.formater = Formater()
