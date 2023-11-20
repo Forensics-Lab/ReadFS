@@ -8,6 +8,9 @@ class Checkpoint():
         self.formater = Formater()
         self.__containerTableNodeEntries = None
         self.chStruct = self.formater.removeEmptyEntries(unpack("<80s4p2h2iq2i8s4s4p16p14i", self.__byteArray[:0xC8]))
+        self.chksum = self.formater.toHex(PageVerifySelfChecksum( \
+            _bytes[:0xd0] + bytes(0x68) + _bytes[0xd0+0x68:]
+            ).checksum())
 
     def setContainerTableEntries(self, entries:list):
         self.__containerTableNodeEntries = entries
@@ -96,6 +99,7 @@ class Checkpoint():
         return self.convertToLCN(self.pointersList()[12], skipTable=True)
 
     def info(self) -> str:
+        page = PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()], len(self.__byteArray))
         return f"{PageHeader(self.chStruct[0]).info()}\n"\
                f"<<======================[Checkpoint]=====================>>\n"\
                f"[+] ReFS Version: {self.ReFSVersion()}\n"\
@@ -119,4 +123,4 @@ class Checkpoint():
                f"[+] Container Index Table: {self.containerIndexTablePointer()}\n"\
                f"[+] Integrity State Table: {self.integrityStateTablePointer()}\n"\
                f"[+] Small Allocator Table: {self.smallAllocatorTablePointer()}\n"\
-               f"{PageDescriptor(self.__byteArray[self.selfDescriptorOffset():][:self.selfDescriptorLength()], len(self.__byteArray)).info()}"
+               f"[+] Page valid: {self.chksum == page.checksum()}\n{page.info()}"

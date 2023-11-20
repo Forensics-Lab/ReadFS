@@ -1,10 +1,10 @@
-from typing import Union
+from typing import Union, Tuple, List, Set
 from struct import unpack
 from cli.Managers.Bytes import Formater
 from cli.Managers.Handlers import Config
 
 class PageHeader:
-    def __init__(self, byteArray: Union[list[bytes], tuple[bytes], set[bytes]]) -> None:
+    def __init__(self, byteArray: Union[List[bytes], Tuple[bytes], Set[bytes]]) -> None:
         self.formater = Formater()
         self.phStruct = unpack("<4s2i4s8s8s6q", byteArray)
 

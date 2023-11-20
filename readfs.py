@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 def main():
     EVIDENCE_FILE = Reader(args.file)
-    bootSector = BootSector(EVIDENCE_FILE.getBytes(0x48))
+    bootSector = BootSector(EVIDENCE_FILE.getBytes(512))
     superblock = Superblock(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), bootSector.superBlockOffset()))
     checkpoint = Checkpoint(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), superblock.checkpointOffset()[0]))
     checkpoint.setContainerTableEntries(Node(EVIDENCE_FILE.getBytes(bootSector.clusterSize(), checkpoint.containerTablePointer())).indexEntries().getEntries())
