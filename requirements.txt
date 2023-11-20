@@ -1,4 +1,5 @@
-prettytable==2.5.0
-
-# https://github.com/Nicoretti/crc
-crc>=5.0.0
+crc
+Pillow
+pyzipper
+prettytable
+customtkinter
