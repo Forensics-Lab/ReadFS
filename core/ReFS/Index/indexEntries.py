@@ -1,7 +1,7 @@
-from cli.ReFS.Tables import *
+from core.ReFS.Tables import *
 from typing import Union, Tuple, List, Set
 from prettytable import PrettyTable
-from cli.Managers.Bytes import Formater
+from core.Managers.Bytes import Formater
 
 class IndexEntries:
     def __init__(self, byteArray:Union[List[bytes], Tuple[bytes], Set[bytes]], keysCount:int, tableIdentifier, indexRootvariableComponent:bytes, clusterSize:int) -> None:

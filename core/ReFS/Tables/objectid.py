@@ -1,6 +1,6 @@
 from typing import Union, Tuple, List, Set
-from cli.ReFS.Tables import Table
-from cli.ReFS.Page import PageDescriptor
+from core.ReFS.Tables import Table
+from core.ReFS.Page import PageDescriptor
 
 class ObjectID(Table):
     def __init__(self, byteArray:Union[List[bytes], Tuple[bytes], Set[bytes]], clusterSize) -> None:

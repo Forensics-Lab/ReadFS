@@ -1,6 +1,6 @@
-from cli.ReFS.Page import *
+from core.ReFS.Page import *
 from struct import unpack
-from cli.Managers.Bytes import Formater
+from core.Managers.Bytes import Formater
 
 class Superblock():
     def __init__(self, _bytes: bytes) -> None:

@@ -1,6 +1,6 @@
 from typing import Union, Tuple, List, Set
 from struct import unpack
-from cli.Managers.Bytes import Formater
+from core.Managers.Bytes import Formater
 
 
 class PageVerifySelfChecksum:

@@ -1,5 +1,5 @@
 from struct import unpack
-from cli.Managers.Bytes import Formater
+from core.Managers.Bytes import Formater
 
 
 ''' https://learn.microsoft.com/windows/win32/fileio/computing-a-file-system-recognition-checksum '''

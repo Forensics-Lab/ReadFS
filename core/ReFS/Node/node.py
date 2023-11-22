@@ -1,6 +1,6 @@
-from cli.ReFS.Page import PageHeader
-from cli.Managers.Bytes import Formater
-from cli.ReFS.Index import DataArea, IndexHeader, IndexEntries, IndexElement
+from core.ReFS.Page import PageHeader
+from core.Managers.Bytes import Formater
+from core.ReFS.Index import DataArea, IndexHeader, IndexEntries, IndexElement
 
 class Node():
     def __init__(self, _bytes: bytes) -> None:

@@ -1,4 +1,4 @@
-from cli.Managers.Bytes import Formater
+from core.Managers.Bytes import Formater
 from typing import Union, Tuple, List, Set
 
 class IndexHeader:

@@ -1,7 +1,7 @@
 from typing import Union, Tuple, List, Set
 from struct import unpack
-from cli.Managers.Bytes import Formater
-from cli.Managers.Handlers import Config
+from core.Managers.Bytes import Formater
+from core.Managers.Handlers import Config
 
 class PageHeader:
     def __init__(self, byteArray: Union[List[bytes], Tuple[bytes], Set[bytes]]) -> None:
@@ -30,7 +30,7 @@ class PageHeader:
         return self.phStruct[6:10]
 
     def tableIdentifier(self) -> str:
-        identifiersStruct = Config().get_file_contents("cli/ReFS/Identifiers/Tables/tableIdentifiers.json")
+        identifiersStruct = Config().get_file_contents("core/ReFS/Identifiers/Tables/tableIdentifiers.json")
         identifier = str(self.phStruct[10] ^ self.phStruct[11])
         return identifiersStruct[identifier] if identifier in identifiersStruct else identifier
 

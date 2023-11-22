@@ -1,5 +1,5 @@
 from typing import Union, Tuple, List, Set
-from cli.ReFS.Tables import Table
+from core.ReFS.Tables import Table
 
 class LogFile(Table):
     def __init__(self, byteArray:Union[List[bytes], Tuple[bytes], Set[bytes]]) -> None:
